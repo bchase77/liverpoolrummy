@@ -1,0 +1,8 @@
+C:23469
+S:2356
+H:23Q
+D:459
+J:3x
+
+Why discard AC when you had A234?
+

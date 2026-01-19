@@ -1,0 +1,400 @@
+/**
+ *---------
+ * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
+ * LiverpoolRummy implementation : © Bryan Chase <bryanchase@yahoo.com>
+ *
+ * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
+ * See http://en.boardgamearena.com/#!doc/Studio for more information.
+ * -----
+ *
+ * liverpoolrummy.css
+ *
+ * LiverpoolRummy stylesheet
+ *
+ */
+
+/*
+    This is the CSS stylesheet of your game User Interface.
+    
+    Styles defined on this file will be applied to the HTML elements you define in your
+    HTML template (liverpoolrummy_liverpoolrummy.tpl), and to HTML elements you create dynamically
+    (in liverpoolrummy.js).
+    
+    Usually, you are using CSS to:
+    
+    1°) define the overall layout of your game
+        (ex: place the board on the top left, place player's hand beside, place the deck on the right, ...).
+
+    2°) create your CSS-sprites:
+        All images of your games should be gathered into a small number of image files. Then, using
+        background-image and background-position CSS properties, you create HTML blocks that can 
+        display these images correctly (see example below).
+    
+    3°) ... anything else:
+        It is really easy to add and remove CSS classes dynamically from your Javascript with
+        dojo.addClass and dojo.removeClass. It is also easy to check if an element has a class
+        (dojo.hasClass) or to get all elements with a specific class (dojo.query). This is why,
+        very often, using CSS classes for the logic of your user interface allow you to do complex
+        thing easily.
+        
+        
+     Note: on the production platform, this file will be compressed and comments will be removed.
+           Consequently, don't hesitate to put as many comments as necessary.
+*/
+
+
+/* Note: you must not use any @import directive */
+
+
+/********* You can start writing your CSS below this line: **********/
+
+#downArea {
+    position: left;
+/*    width: 100%;
+    height: 200px;
+*/
+}
+/*.sortbuttons {
+	float: Left;
+	width: 740px;
+}
+*/
+/*
+.spectatorMode #myhand_wrap {
+    display: none;
+}
+*/
+/*
+Calling out each one below doesn't seem to do anything. Instead in the JS code I
+individually display or hide the element.
+*/
+.spectatorMode
+ #myhand_wrap
+ #wishListAreaWrap
+ #TLeftBox
+ #myHandArea
+ #MYHANDTRANSLATED
+ #myHandSize
+ #buttonPlayerSortBySet
+ #SORTSETSTRANSLATED
+ #buttonPlayerSortByRun
+ #SORTRUNSTRANSLATED
+ #buttonBuy
+ #BUYTRANSLATED
+ #buttonNotBuy
+ #NOTBUYTRANSLATED
+ #buttonLiverpool
+ #buttonGoDownStatic
+ #buttonShowHideWishList
+ #buttonSavePrep
+ #buttonLoadPrep
+ #voice
+ #LIVERPOOL
+ #myhand
+ #myPrepA
+ #myPrepB
+ #myPrepC
+ #myPrepJoker
+{
+    display: none;
+}
+
+/*.wishListMode #TLeftBox2 {*/
+.wishListMode {
+    display: none;
+}
+
+.gmk_intersection {
+    width: 30px;
+    height: 30px;
+    position: relative;
+}
+
+.wishListItem_selected {
+	border: 4px solid green !important;
+}
+
+.stockitem_selected {
+	border: 4px solid red !important;
+}
+
+.stockitem_newcard {
+	border: 4px solid greenyellow !important;
+}
+
+.discardPileArea {
+	border: 2px solid gray !important;
+}
+
+.stockitem_extraJoker {
+	border: 2px solid green !important;
+}
+
+.playerBoardBuyer {
+	background: salmon;
+}
+
+.playerWentDown {
+	background: LightGreen;
+}
+
+.blink {
+	animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker{
+	50% { opacity: 0; }
+}
+
+.textGray {
+    color: gray;
+}
+
+.textWhite {
+    color: white;
+}
+
+.rightboxHandArea {
+	float: Left;
+	width: 100%;
+	height: 140px;
+}
+.deckbox {
+	float: Left;
+	position:relative;
+	width: 13%;
+	height: 140px;
+}
+.discardbox {
+	float: Left;
+	position: relative;
+	width: 13%;
+	height: 140px;
+}
+.tim183spacer {
+	float: Left;
+	position: relative;
+	width: 4%;
+	height: 140px;
+	text-align: center;
+}
+.prepbox {
+	float: Left;
+	position: relative;
+	width: 19%;
+	height: 140px;
+	text-align: center;
+	color: blue;
+	border-color: coral;
+	border-style: solid;
+    border-width: 1px;
+}
+.prepjoker {
+	float: Left;
+	position: relative;
+	width: 8%;
+	height: 140px;
+	text-align: center;
+	color: blue;
+	border-color: coral;
+	border-style: solid;
+    border-width: 1px;
+}
+.myHandWrap {
+	float: Left;
+	margin: 10px;
+	border: 10px;
+	padding: 10px;
+	width: 95%;
+/*
+	height: 180px;
+*/
+}
+.myhandClass {
+	float: Left;
+/*	left: 2px; */
+/*	width: 740px;*/
+	margin: 10px;
+	border: 10px;
+	padding: 10px;
+	width: 95%;
+/*
+	height: 180px;
+*/
+}
+.wishListClassOff {
+	float: Left;
+	background-color: gray;
+/*    filter: gray; /* IE6-9 */
+/*    -webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+/*    filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+/*
+	margin: 1px;
+	border: 1px;
+	padding: 1px;
+*/
+	width: 468px;
+	/*height: 180px;*/
+}
+.wishListClassOn {
+	float: Left;
+	background-color: aqua;
+/*	-webkit-filter: grayscale(0); */
+/*    filter: none; */
+/*
+	margin: 1px;
+	border: 1px;
+	padding: 1px;
+*/
+	width: 468px;
+	/*height: 180px;*/
+}
+.leftboxHandArea {
+	float: Left;
+	width: 100%;
+/*
+	height: 140px;
+*/
+}
+.wishListAreaClass {
+	float: Left;
+/*
+	margin: 1px;
+	border: 1px;
+	padding: 1px;
+*/
+	width: 470px;
+}
+.wishListAreaWrapClass {
+	float: Left;
+	position: relative;
+/*
+    margin: 10px;
+	border: 2px;
+	padding: 2px;
+*/
+	/*width: 50%;*/
+/*
+	height: 180px;
+*/
+}
+
+.containerWL { position: relative; width: 100px; height: 100px; float: left; margin-left: 10px; }
+.checkboxWL { position: absolute; bottom: 50px; right: 70px; }
+
+
+.goDownWrapSkyOverField {
+	float: Left;
+    background-image: url('img/SkyOverField.png');
+	background-size: cover;
+	background-repeat: no-repeat;
+	margin: 10px;
+	border: 10px;
+	padding: 10px;
+	width: 95%;
+}
+
+.goDownWrapYellowTable {
+	float: Left;
+    background-image: url('img/YellowTable.png');
+	background-size: cover;
+	background-repeat: no-repeat;
+	margin: 10px;
+	border: 10px;
+	padding: 10px;
+	width: 95%;
+}
+
+.rum_buyicon {
+	width: 20px;
+	height: 24px;
+	display: inline-block;
+    position: relative;
+    background-image: url( 'img/dollarSign20x24.png');
+    margin-top: 4px;
+    margin-right: 3px;
+}
+
+.rum_cardicon {
+	width: 20px;
+	height: 24px;
+	display: inline-block;
+    position: relative;
+    background-image: url( 'img/cardback.png');
+    margin-top: 4px;
+    margin-right: 3px;
+}
+
+.downWhite{
+	float: Left;
+	width: 15%;
+	height: 80px;
+	margin: 2px;
+	border: 2px;
+	padding: 2px;
+	text-align: center;
+	color: gray;
+}
+
+.playerText{
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.buyerLit {
+/*  border-style: solid;
+  border-color: red;
+  border-width: 1px;
+*/
+  border:0;
+  background: salmon;
+}
+
+.borderDrawer {
+/*  border-style: solid;
+  border-color: red;
+  border-width: 1px;
+*/
+  border:0;
+  background: green;
+}
+.downPrep{
+/*	background-color: Blue; */
+	opacity: 0.1;
+	float: Left;
+	width: 30%;
+	height: 80px;
+	margin: 2px;
+	border: 2px;
+	padding: 2px;
+	text-align: center;
+	color: white;
+}
+
+.cp_board {
+	clear: both;
+}
+
+.player_score {
+	clear: both;
+}
+
+/*
+    Example of CSS sprites (a black token and a white token, 20x20px each, embedded in the same "tokens.png" 40x20px image):
+
+    .white_token {
+        background-image: url('img/tokens.png');
+        background-position: 0px 0px;
+    }
+    .black_token {
+        background-image: url('img/tokens.png');
+        background-position: -20px 0px;
+    }
+    .token {
+        width: 20px;
+        height: 20px;
+        background-repeat: none;
+    }
+*/

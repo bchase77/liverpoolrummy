@@ -1,0 +1,16 @@
+LIVERPOOLRUMMY - TODO / Known Issues
+=====================================
+
+1. DUPLICATE "WENT DOWN" NOTIFICATIONS (12x messages in log)
+   ---------------------------------------------------------
+   Location: liverpoolrummy.game.php:2773
+
+   Issue: `self::checkAction('playerGoDown')` is commented out, allowing
+   multiple rapid clicks on the "Go Down" button to send duplicate requests
+   to the server. Each request is processed and generates a notification.
+
+   Fix: Uncomment and update to use new action name:
+        self::checkAction('actPlayerGoDown');
+
+   Also consider adding client-side protection in liverpoolrummy.js in
+   onPlayerGoDownButton() to disable the button immediately on click.

@@ -1,0 +1,86 @@
+{
+	"100": { "name": "Number of decks",
+			 "values": {
+				 "2": { "name": "2 decks" },
+				 "3": { "name": "3 decks" },
+				 "4": { "name": "4 decks" },
+				 "5": { "name": "5 decks" }
+			 },
+			 "default": 2
+	},
+	"102": { "name": "Game Length (Set and Run targets needed for each hand)",
+			 "values": {
+				"1" : { "name": "1 hand (2 Sets)" },
+				"2" : { "name": "1 hand (1 Set & 1 Run)" },
+				"3" : { "name": "1 hand (2 Runs)" },
+				"4" : { "name": "1 hand (3 Sets)" },
+				"5" : { "name": "1 hand (2 Sets & 1 Run)" },
+				"6" : { "name": "1 hand (1 Set & 2 Runs)" },
+				"7" : { "name": "1 hand (3 Runs)" },
+				"8" : { "name": "2 hand game (2Sets, 2Runs)" },
+				"9" : { "name": "3 hand game (2Sets, 1Set2Runs, 3Runs)" },
+				"10": { "name": "Short game (2Sets, 2Runs, 2Sets1Run, 3Runs)" },
+				"11": { "name": "Full game (2Sets, 1Set1Run, 2Runs, 3Sets, 2Sets1Run, 2Run1Set, 3Runs)" },
+				"12": { "name": "May I variant (2S, 1S1R, 2R, 3S, 2S1R, 2R1S, 3R & deal contract + 1)" }
+			 },
+			 "default": 9
+	},
+	"103": { "name": "Liverpool consequence",
+			 "values": {
+				 "0": { "name": "Bonus to caller" },
+				 "1": { "name": "Penalty to discarder" }
+			 },
+			 "default": 0
+	},
+	"104": { "name": "Maximum number of Jokers (normally 2x per deck)",
+			 "values": {
+				"0"  : { "name": "0 no jokers" },
+				"1"  : { "name": "1 joker"  },
+				"2"  : { "name": "2 jokers" },
+				"3"  : { "name": "3 jokers" },
+				"4"  : { "name": "4 jokers" },
+				"5"  : { "name": "5 jokers" },
+				"6"  : { "name": "6 jokers" },
+				"7"  : { "name": "7 jokers" },
+				"8"  : { "name": "8 jokers" },
+				"9"  : { "name": "9 jokers" },
+				"10" : { "name": "All (2x number of decks)" }
+			 },
+			"default": 10
+	},
+	"105": { "name": "Number of buys",
+			 "values": {
+				 "0": { "name": "3 per hand" },
+				 "1": { "name": "Unlimited" }
+			 },
+			 "default": 0
+	},
+	"106": { "name": "Always deal 11 cards",
+			 "values": {
+				 "0": { "name": "No" },
+				 "1": { "name": "Yes" }
+			 },
+			 "default": 0
+	},
+	"108": { "name": "Enable wish list",
+			 "values": {
+				 "0": { "name": "No" },
+				 "1": { "name": "Yes" }
+			 },
+			 "default": 0
+	},
+	"109": { "name": "Allow joker swapping",
+			 "values": {
+				 "0": { "name": "No" },
+				 "1": { "name": "Yes" }
+			 },
+			 "default": 1
+	},
+	"111": { "name": "Tabletop",
+			 "values": {
+				 "0": { "name": "Sky Over Field" },
+				 "1": { "name": "Gramma's Yellow Vinyl" }
+			 },
+			 "default": 0
+	}
+}

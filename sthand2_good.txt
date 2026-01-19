@@ -1,0 +1,140 @@
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] '[bmc] ENTER stEndHand' 3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] 6610 currentHandType stEndHand: = string(1) "2"
+3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] 6611 this->handTypes stEndHand: = array(7) {
+[0]=>
+array(4) {
+["Target"]=>
+string(57) "2 Sets; No more no less (Set is 3 any suit of same value)"
+["QtySets"]=>
+int(2)
+["QtyRuns"]=>
+int(0)
+["deal"]=>
+int(10)
+}
+[1]=>
+array(4) {
+["Target"]=>
+string(131) "1 Set and 1 Run; No more no less (Set is 3 any suit of same value; Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(1)
+["QtyRuns"]=>
+int(1)
+["deal"]=>
+int(11)
+}
+[2]=>
+array(4) {
+["Target"]=>
+string(89) "2 Runs; No more no less (Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(0)
+["QtyRuns"]=>
+int(2)
+["deal"]=>
+int(11)
+}
+[3]=>
+array(4) {
+["Target"]=>
+string(57) "3 Sets; No more no less (Set is 3 any suit of same value)"
+["QtySets"]=>
+int(3)
+["QtyRuns"]=>
+int(0)
+["deal"]=>
+int(12)
+}
+[4]=>
+array(4) {
+["Target"]=>
+string(132) "2 Sets and 1 Run; No more no less (Set is 3 any suit of same value; Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(2)
+["QtyRuns"]=>
+int(1)
+["deal"]=>
+int(12)
+}
+[5]=>
+array(4) {
+["Target"]=>
+string(132) "1 Set and 2 Runs; No more no less (Set is 3 any suit of same value; Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(1)
+["QtyRuns"]=>
+int(2)
+["deal"]=>
+int(12)
+}
+[6]=>
+array(4) {
+["Target"]=>
+string(89) "3 Runs; No more no less (Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(0)
+["QtyRuns"]=>
+int(3)
+["deal"]=>
+int(12)
+}}
+}
+3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] 6616 countHandTypes stEndHand: = int(7)
+3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] 6622 3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] gameLengthOption: = string(2) "11"
+3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] 6632 3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] handTypes stEndHand: = array(4) {
+[0]=>
+array(4) {
+["Target"]=>
+string(57) "2 Sets; No more no less (Set is 3 any suit of same value)"
+["QtySets"]=>
+int(2)
+["QtyRuns"]=>
+int(0)
+["deal"]=>
+int(10)
+}
+[1]=>
+array(4) {
+["Target"]=>
+string(89) "2 Runs; No more no less (Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(0)
+["QtyRuns"]=>
+int(2)
+["deal"]=>
+int(11)
+}
+[2]=>
+array(4) {
+["Target"]=>
+string(132) "2 Sets and 1 Run; No more no less (Set is 3 any suit of same value; Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(2)
+["QtyRuns"]=>
+int(1)
+["deal"]=>
+int(12)
+}
+[3]=>
+array(4) {
+["Target"]=>
+string(89) "3 Runs; No more no less (Run is 4 in sequence of same suit. Ace can play as high or low.)"
+["QtySets"]=>
+int(0)
+["QtyRuns"]=>
+int(3)
+["deal"]=>
+int(12)
+}}
+}
+3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] [bmc] handTarget stEndHand: = string(132) "2 Sets and 1 Run; No more no less (Set is 3 any suit of same value; Run is 4 in sequence of same suit. Ace can play as high or low.)"
+3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] 0 SELECT player_id, player_score FROM player 3
+30/12 03:46:29 [info] [T665443] [104.56.116.219] [2333742/DodyOaks0] '[bmc] EXIT stEndHand' 3
