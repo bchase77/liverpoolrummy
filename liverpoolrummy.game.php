@@ -2715,7 +2715,7 @@ self::trace("[bmc] Deadlock:2179");
 		self::notifyAllPlayers( 'drawCardSpect',
 			// WHY IS NEXT LINE COMMENTED OUT???
 			// It was commented out because 2 entries appear in the log if it's not blank. Now I commented out the per-player one above.
-			clienttranslate( '${player_name} drew a card from the ${drawSourceText}' ),
+			clienttranslate( '${player_name} Drew a card from the ${drawSourceText}' ),
 			array(
 				'i18n' => array( 'drawSourceText' ),
 				'player_id' => $activeTurnPlayer_id,

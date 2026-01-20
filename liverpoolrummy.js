@@ -6369,22 +6369,6 @@ console.log("[bmc] sound: It's Your Turn");
 			
 
 			return;
-			
-			// TODO: DELETE THE REST OF THIS UNRUNNABLE CODE:
-			
-			// If by timer then run stop timers and hide the buttons
-			// If by seat order then do not
-			if ( this.gamedatas.options.buyMethod == 1 ) {
-				// this.stopActionTimer2();
-				this.showHideButtons();
-				console.log( this.gamedatas.players[ notif.args.player_id ].name  );
-				
-				console.log("[bmc] Adding class and showing bubble");
-				
-				this.enDisStaticBuyButtons('No');
-
-			} else { // Do nothing just wait for the draw
-			}
 		},
 /////////
 /////////
