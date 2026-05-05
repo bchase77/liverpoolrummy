@@ -163,5 +163,20 @@ var jstpl_some_game_item='<div class="my_game_item" id="my_game_item_${MY_ITEM_I
 var jstpl_cardontable = '<div class="cardontable" id="cardontable_${player_id}" style="background-position:-${x}px -${y}px">\
                         </div>';
 */
-</script>  
+</script>
+
+<script src="{GAMETHEMEURL}modules/js/CardHelpers.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/BoardDisplay.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/StateHandlers.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/DrawDeck.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/HandInteraction.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/DownArea.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/Buying.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/Wishlist.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/PrepArea.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/CardPlaying.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/Liverpool.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/Notifications.js" type="text/javascript"></script>
+<script src="{GAMETHEMEURL}modules/js/UIHelpers.js" type="text/javascript"></script>
+
 {OVERALL_GAME_FOOTER}
