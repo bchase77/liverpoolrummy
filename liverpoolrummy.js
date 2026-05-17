@@ -1375,6 +1375,9 @@ console.log("[bmc] DOWN CARD SELECT SETUP");
 			$(handNumber).innerHTML = _("Target Hand ") + currentHandNumber + _(" of ") + this.totalHandCount + ": ";
 			$(redTarget).innerHTML = this.gamedatas.handTarget;
 			console.log( $(redTarget) );
+			if ( this.gamedatas.gameVersion ) {
+				$('gameVersion').innerHTML = 'v' + this.gamedatas.gameVersion;
+			}
 			
 			// After they refresh, if they already requested buy, don't let them try to buy again
 			if ( this.gamedatas.buyers[ this.player_id ] == 2 ) {

@@ -629,6 +629,9 @@ class LiverpoolRummy extends Bga\GameFramework\Table
 		// Determine the type of tabletop
         $result['tabletop'] = $this->getGameStateValue( 'tabletop' );
 
+        @include_once( dirname(__FILE__) . '/version.inc.php' );
+        $result['gameVersion'] = isset( $gameVersion ) ? $gameVersion : '';
+
         return $result;
     }
 ////////

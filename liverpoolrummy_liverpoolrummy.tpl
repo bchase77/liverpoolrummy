@@ -27,9 +27,10 @@
 -->
 
 <h3>
-	<span> 
+	<span>
 		<span id="handNumber" style="color:Black"></span>
 		<span id="redTarget" style="color:Blue"></span>
+		<span id="gameVersion" style="color:Gray; font-size:small; margin-left:20px"></span>
 	</span>
 </h3>
 <div id="myhand_wrap" class="myHandWrap whiteblock">
