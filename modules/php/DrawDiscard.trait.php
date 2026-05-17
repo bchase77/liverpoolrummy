@@ -5,8 +5,7 @@ trait DrawDiscard {
 		// self::trace( "[bmc] ENTER discardCard (from JS via action.php)" );
 		self::trace("'<span style='color:red'><b>[bmc] ENTER discardCard (from JS via action.php)</b></span>'");
 
-		// self::checkAction("discardCard");
-		// self::checkAction("actDiscardCard");
+		self::checkAction("actDiscardCard");
 		
 		$activeTurnPlayer_id = self::getGameStateValue( 'activeTurnPlayer_id' );
 		self::dump("[bmc] activeTurnPlayer_id:", $activeTurnPlayer_id );

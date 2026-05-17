@@ -29,9 +29,9 @@ trait Scoring {
 		// Enter into log
 		// Notify players to review their hands and click to continue
 		$currentPlayerId = $this->getCurrentPlayerId();
-		
+
 		$players = self::loadPlayersBasicInfos();
-		$player_name = $players[ $currentPlayerId ][ 'player_name' ];
+		$player_name = isset( $players[ $currentPlayerId ] ) ? $players[ $currentPlayerId ][ 'player_name' ] : '';
 
 		self::dump( "[bmc] currentPlayerId:", $currentPlayerId );
 		self::dump( "[bmc] player_name:", $player_name );
@@ -42,7 +42,7 @@ trait Scoring {
 				'player_id'   => $currentPlayerId,
 				'player_name' => $player_name
 			)
-		); 
+		);
 
 		// Check end of game condition here. Message and route the players accordingly.
 

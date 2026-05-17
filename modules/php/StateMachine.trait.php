@@ -150,11 +150,8 @@ trait StateMachine {
 		// $currentPlayerId = $this->getCurrentPlayerId();
 		// $currentPlayer = $players[ $currentPlayerId ][ 'player_name' ];
 		
-		// TODO still has a rare bug (next line was 1634):
-		//[19-Jan-2025 09:05:04 Europe/Berlin] PHP Warning:  Undefined array key -452092320 in /var/tournoi/release/games/liverpoolrummy/241230-2311/liverpoolrummy.game.php on line 1634
-		// [19-Jan-2025 09:05:04 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in /var/tournoi/release/games/liverpoolrummy/241230-2311/liverpoolrummy.game.php on line 1634
-		
-		$currentPlayer = $players[ $this->getCurrentPlayerId() ][ 'player_name' ];
+		$currentPlayerId = $this->getCurrentPlayerId();
+		$currentPlayer = isset( $players[ $currentPlayerId ] ) ? $players[ $currentPlayerId ][ 'player_name' ] : '';
         
 		return array(
 			'player_name' => $currentPlayer,
@@ -363,41 +360,20 @@ trait StateMachine {
 			$this->gamestate->changeActivePlayer( $playerInterrupted );
 
 			$this->gamestate->nextState( 'LPReturn' );
+			return;
 
 		} else { //Exit by changing next player in order
 			if( self::checkLiverpool() == true ){
 				// Nofity all players there's a liverpool on the board
-				
+
 				self::setGameStateValue( 'liverpoolExists', 1 ); // 0=not exist; 1=exist
 				self::trace( "[bmc] LiverpoolExists=True, waiting to see if someone finds it" );
 			}
-				
+
+			self::processWishlist(); // Process the wishlist requests
 			$this->gamestate->nextState( 'fullyResolved' );
+			return;
 		}
-		// $buyer_id = self::getGameStateValue( 'theBuyer' );
-
-		// self::dump("[bmc] waitForAll buyer_id:", $buyer_id);
-
-		if( self::checkLiverpool() == true ){
-			// Nofity all players there's a liverpool on the board
-			
-			self::setGameStateValue( 'liverpoolExists', 1 ); // 0=not exist; 1=exist
-			self::trace( "[bmc] Missed liverpoolExists: True, might be found" );
-			
-			// Players requested to hide the notification of Liverpool! in the log.
-			// Uncomment this notifyAllPlayers command if you want that.
-			//
-			// self::notifyAllPlayers(
-				// 'liverpoolExists',
-				// 'Liverpool!', // Put it in the log
-				// array ()
-			// );
-		}
-
-		// self::setGameStateValue( 'liverpoolExists', 0 ); // 0=not exist; 1=exists
-		// self::trace( "[bmc] Stored liverpoolExists=0" );
-
-		self::processWishlist(); // Process the wishlist requests
 
 //		self::trace( "[bmc] EXIT  stWaitForAll" );
 		self::trace("'<span style='color:green'><b>[bmc] EXIT  stWaitForAll</b></span>'");
@@ -481,8 +457,8 @@ trait StateMachine {
 			$this->gamestate->nextState( "endHand" );
 		} else if ( $this->checkPlayable() != true ) {	// All playable cards have been played
 			self::dump("[bmc] stNextPlayer checkPlayable not true:", 0);
-			//$outReason = "AllCardsPlayed";			
-			self:setGameStateValue( "outReason", 2 );   // All playable cards have been played
+			//$outReason = "AllCardsPlayed";
+			self::setGameStateValue( "outReason", 2 );   // All playable cards have been played
 			$this->gamestate->nextState( "endHand" );
 		} else {
 
