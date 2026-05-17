@@ -17,7 +17,7 @@ trait GoDown {
 
 		$active_player_id = self::getActivePlayerId();
 		self::dump("[bmc] playerGoDown: ", $active_player_id);
-		// self::checkAction('playerGoDown');
+		$this->checkAction('actPlayerGoDown');
 
 		// Add restriction to go down with no more than 1 joker (or not)
 		$cntCardGroupA = count( $cardIDGroupA );

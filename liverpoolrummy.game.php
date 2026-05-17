@@ -39,8 +39,6 @@
   *
   */
 
-require_once( APP_GAMEMODULE_PATH.'module/table/table.game.php' );
-
 require_once('modules/php/CardHelpers.trait.php');
 require_once('modules/php/PlayerState.trait.php');
 require_once('modules/php/DrawDiscard.trait.php');
@@ -54,7 +52,7 @@ require_once('modules/php/StateMachine.trait.php');
 use \Bga\GameFramework\Actions\Types\IntArrayParam;
 use \Bga\GameFramework\Actions\CheckAction;
 
-class LiverpoolRummy extends Table
+class LiverpoolRummy extends Bga\GameFramework\Table
 {
 	use CardHelpers, PlayerState, DrawDiscard, Buying, Melds, GoDown, Liverpool, Scoring, StateMachine;
 
@@ -130,12 +128,6 @@ class LiverpoolRummy extends Table
 		$this->bSelectGlobalsForUpdate = true;
 	}
 	
-    protected function getGameName( )
-    {
-		// Used for translations and stuff. Please do not modify.
-        return "liverpoolrummy";
-    }	
-
     /*
         setupNewGame:
         
@@ -248,6 +240,7 @@ class LiverpoolRummy extends Table
         self::initStat( 'player', 'jokers_number', 0 );
 
         /************ End of the game initialization *****/
+        return 10; // First state: deckSetup
     }
 
 

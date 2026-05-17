@@ -263,7 +263,7 @@ trait Scoring {
 	public function actPlayerHasReviewedHand() {
 		self::trace("[bmc] playerHasReviewedHand");
 		// May not need to pass the player_id to the function
-		// self::checkAction('playerHasReviewedHand');
+		$this->checkAction('actPlayerHasReviewedHand');
 
 		$player_id = $this->getCurrentPlayerId(); // CURRENT!!! not active
 		 

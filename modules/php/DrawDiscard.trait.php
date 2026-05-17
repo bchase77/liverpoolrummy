@@ -5,7 +5,7 @@ trait DrawDiscard {
 		// self::trace( "[bmc] ENTER discardCard (from JS via action.php)" );
 		self::trace("'<span style='color:red'><b>[bmc] ENTER discardCard (from JS via action.php)</b></span>'");
 
-		self::checkAction("actDiscardCard");
+		$this->checkAction("actDiscardCard");
 		
 		$activeTurnPlayer_id = self::getGameStateValue( 'activeTurnPlayer_id' );
 		self::dump("[bmc] activeTurnPlayer_id:", $activeTurnPlayer_id );
@@ -423,7 +423,7 @@ trait DrawDiscard {
 		// self::dump("drawSource:", $drawSource );
 		// self::dump("Drawing player id:", $player_id );
 		
-        self::checkAction("actDrawCard"); // Check action if coming from JS, not needed when coming from PHP
+        $this->checkAction("actDrawCard"); // Check action if coming from JS, not needed when coming from PHP
 		
 		$this->drawCardCommon( $card_id, $drawSource, $player_id ); // 
 	}

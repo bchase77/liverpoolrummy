@@ -103,7 +103,7 @@ trait Melds {
 		//   If the target card is a joker, take the joker & replace
 		// Move the card(s) around
 		// Notify the players
-		// self::checkAction("playCard");
+		$this->checkAction("actPlayCard");
 
 		// Validate the player has already gone down
 		$playerGoneDown = self::getPlayerGoneDown(); // It's an array, one for each player.
@@ -147,7 +147,7 @@ trait Melds {
 			//   If the target card is a joker, take the joker & replace
 			// Move the card(s) around
 			// Notify the players
-			// self::checkAction("playCardMultiple");
+			$this->checkAction("actPlayCardMultiple");
 
 			// Validate the player has already gone down
 			$playerGoneDown = self::getPlayerGoneDown(); // It's an array, one for each player.
