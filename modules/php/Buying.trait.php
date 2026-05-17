@@ -1,5 +1,7 @@
 <?php
 
+use \Bga\GameFramework\Actions\Types\IntArrayParam;
+
 trait Buying {
 	function notifyPlayerWantsToNotBuy( $player_id ) {
 		self::dump("[bmc] ENTER notifyPlayerWantsToNotBuy:",  $player_id);

@@ -1,5 +1,7 @@
 <?php
 
+use \Bga\GameFramework\Actions\Types\IntArrayParam;
+
 trait Melds {
 	function tryJokerSwap ( $card_id, $player_id, $boardArea, $boardPlayer) {
 		self::trace("[bmc] ENTER tryJokerSwap");

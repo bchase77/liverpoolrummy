@@ -1,5 +1,7 @@
 <?php
 
+use \Bga\GameFramework\Actions\Types\IntArrayParam;
+
 trait GoDown {
 	public function actPlayerGoDown(
 		#[IntArrayParam] array $cardIDGroupA,
