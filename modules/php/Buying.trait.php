@@ -1,6 +1,7 @@
 <?php
 
 use \Bga\GameFramework\Actions\Types\IntArrayParam;
+use \Bga\GameFramework\Actions\CheckAction;
 
 trait Buying {
 	function notifyPlayerWantsToNotBuy( $player_id ) {

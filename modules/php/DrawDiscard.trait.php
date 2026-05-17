@@ -1,5 +1,7 @@
 <?php
 
+use \Bga\GameFramework\Actions\CheckAction;
+
 trait DrawDiscard {
 	public function actDiscardCard( int $card_id, int $player_id ) {
 		// self::trace( "[bmc] ENTER discardCard (from JS via action.php)" );
