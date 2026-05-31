@@ -22,6 +22,7 @@ var LRStateHandlers = {
 
 					// Make it clear to the player they need to draw a card (border around card)
 					if ( args.active_player == this.player_id ) {
+						dojo.addClass('myhand_wrap', "borderDrawer");
 						// var deck_items = this.deckOne.getAllItems();
 	// console.log("[bmc] ALL deckOne:");
 	// console.log(deck_items);
@@ -51,6 +52,7 @@ var LRStateHandlers = {
 							dojo.addClass('discardPileOne_item_' + dp_items[i]['id'], 'stockitem_selected');
 						}
 					} else {
+						dojo.removeClass('myhand_wrap', "borderDrawer");
 						// for ( let i in deck_items ) {
 							// dojo.removeClass('deckOne_item_' + deck_items[i]['id'], 'stockitem_selected');
 						// }

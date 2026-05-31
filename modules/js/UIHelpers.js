@@ -26,7 +26,9 @@ console.log( this.playerHand );
 
 			// If it is us, play a special sound and show an alert
 //			this.displayItsYourTurn( this.gamedatas.playerOrderTrue[ player_id ], 'nextturn' );
-			this.displayItsYourTurn( nextTurnPlayer, 'nextturn' );
+			if ( allHands[ player_id ] ) { // Don't notify next player if the discarding player went out
+				this.displayItsYourTurn( nextTurnPlayer, 'nextturn' );
+			}
 
 			// Change the player in JS after the discard (gamedatas is not updated automatically)
 			this.gamedatas.activeTurnPlayer_id = nextTurnPlayer;
