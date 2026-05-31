@@ -222,13 +222,22 @@ trait Melds {
 				throw new BgaUserException( self::_('Cannot play those cards on that meld.') );
 				return;
 			}
+			$cardDescriptions = [];
+			foreach( $handCards as $card ) {
+				if ( $card['type'] == 5 ) {
+					$cardDescriptions[] = 'Joker';
+				} else {
+					$cardDescriptions[] = $this->values_label[ $card['type_arg'] ] . ' of ' . $this->colors[ $card['type'] ]['name'];
+				}
+			}
+
 			$cardsByLocation = $this->cards->countCardsByLocationArgs( 'hand' );
 			self::notifyAllPlayers( 'cardsPlayedMultiple',
-				clienttranslate( '${player_name} Played ${count} cards' ),
+				clienttranslate( '${player_name} Played: ${cards}' ),
 				array(
 					'player_id'   => $player_id,
 					'player_name' => self::getActivePlayerName(),
-					'count'       => count( $handCards ),
+					'cards'       => implode( ', ', $cardDescriptions ),
 					'allHands'    => $cardsByLocation,
 				)
 			);
