@@ -980,57 +980,38 @@ console.log("[bmc] cardIds: " + cardIds );
 /////////
 		sortHand : function( items ) {
 			var thisPlayerHand = this.playerHand.getAllItems();
-			console.log("[bmc] thisPlayerHand");
-			console.log(thisPlayerHand);
+console.log("[bmc] sortHand from:", items[0].id, "to:", items[1].id);
 
 			this.clearButtons();
 
-			// Swap the order if necessary to keep player's 1st selection 1st
-			if ( this.playerHand.firstSelected != items[ 0 ].type ) {
+			// Keep player's first selection first
+			if ( this.playerHand.firstSelected != items[0].type ) {
 				let temp = items[0];
 				items[0] = items[1];
 				items[1] = temp;
 			}
 
-			// Use id (not type) to locate each card — fixes identical cards in multi-deck games
+			// Find positions by id (handles identical-type cards)
 			var spotFrom = -1, spotTo = -1;
 			for ( const [i, card] of thisPlayerHand.entries() ) {
-				if ( spotFrom === -1 && items[0].id === card.id ) spotFrom = i;
-				if ( spotTo   === -1 && items[1].id === card.id ) spotTo   = i;
+				if ( spotFrom === -1 && String(items[0].id) === String(card.id) ) spotFrom = i;
+				if ( spotTo   === -1 && String(items[1].id) === String(card.id) ) spotTo   = i;
 			}
 
-			if ( spotFrom === -1 || spotTo === -1 ) {
-				console.log("[bmc] sortHand: card not found, aborting");
-				this.playerHand.unselectAll();
+			if ( spotFrom === -1 || spotTo === -1 || spotFrom === spotTo ) {
+				console.log("[bmc] sortHand: card not found or same position, aborting");
 				return;
 			}
 
 			this.arraymove( thisPlayerHand, spotFrom, spotTo );
 
-			// For identical cards (same type), also reorder the stock's internal
-			// items array so the stable sort in changeItemsWeight preserves the
-			// new relative order. The internal array may be in a different order
-			// than getAllItems(), so find positions by id rather than reusing
-			// spotFrom/spotTo.
-			if ( items[0].type === items[1].type && this.playerHand.items ) {
-				var internalFrom = -1, internalTo = -1;
-				for ( var j = 0; j < this.playerHand.items.length; j++ ) {
-					if ( String(this.playerHand.items[j].id) === String(items[0].id) ) internalFrom = j;
-					if ( String(this.playerHand.items[j].id) === String(items[1].id) ) internalTo   = j;
-				}
-				if ( internalFrom !== -1 && internalTo !== -1 ) {
-					this.arraymove( this.playerHand.items, internalFrom, internalTo );
-				}
+			// changeItemsWeight keys by type, so two same-type cards always share the
+			// same weight and cannot be placed on opposite sides of a different card.
+			// Reload the stock in the desired order to handle all cases reliably.
+			this.playerHand.removeAll();
+			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
+				this.playerHand.addToStockWithId( thisPlayerHand[i].type, thisPlayerHand[i].id );
 			}
-
-			let weightChange = {};
-			for (let i in thisPlayerHand) {
-				weightChange[ thisPlayerHand[i].type ] = parseInt(i);
-			}
-console.log("[bmc] WC");
-console.log(weightChange);
-			this.playerHand.changeItemsWeight( weightChange );
-			this.playerHand.unselectAll();
 		},
 /////////
 /////////
