@@ -1003,14 +1003,35 @@ console.log("[bmc] sortHand from:", items[0].id, "to:", items[1].id);
 				return;
 			}
 
+			// Snapshot each slot's current left position BEFORE reordering.
+			// After arraymove, slot i should display whichever card is now at index i,
+			// at the left value that slot i had before the move.
+			var slotLefts = [];
+			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
+				var el = $('myhand_item_' + thisPlayerHand[i].id);
+				slotLefts.push( el ? el.style.left : '0px' );
+			}
+
 			this.arraymove( thisPlayerHand, spotFrom, spotTo );
 
-			// changeItemsWeight keys by type, so two same-type cards always share the
-			// same weight and cannot be placed on opposite sides of a different card.
-			// Reload the stock in the desired order to handle all cases reliably.
-			this.playerHand.removeAll();
+			// Assign each card its new left position directly — no removeAll,
+			// no changeItemsWeight, no blink, works for identical types too.
 			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
-				this.playerHand.addToStockWithId( thisPlayerHand[i].type, thisPlayerHand[i].id );
+				var el = $('myhand_item_' + thisPlayerHand[i].id);
+				if ( el ) el.style.left = slotLefts[i];
+			}
+
+			// Keep the internal items array consistent so future updateDisplay()
+			// calls (triggered by other code) maintain this order for same-weight items.
+			if ( this.playerHand.items ) {
+				var internalFrom = -1, internalTo = -1;
+				for ( var j = 0; j < this.playerHand.items.length; j++ ) {
+					if ( String(this.playerHand.items[j].id) === String(items[0].id) ) internalFrom = j;
+					if ( String(this.playerHand.items[j].id) === String(items[1].id) ) internalTo   = j;
+				}
+				if ( internalFrom !== -1 && internalTo !== -1 ) {
+					this.arraymove( this.playerHand.items, internalFrom, internalTo );
+				}
 			}
 		},
 /////////
