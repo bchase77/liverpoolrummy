@@ -12,7 +12,7 @@ var LRPrepArea = {
 			for ( var card of area_Items ){
 				cardUniqueId = card.type;
 				cardId = card.id;
-				this.playerHand.addToStockWithId( cardUniqueId, cardId, $('myhand')); // Pull back to hand
+				this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 				prepArea.removeFromStockById( card.id );
 			}
 			// for ( var card in area_B_Items ){
@@ -221,7 +221,7 @@ console.log("[bmc] cardIds: " + cardIds);
 				cardUniqueId = jcards[0].type;
 				cardId = jcards[0].id;
 				console.log("BMC 082723: Pulling Back");
-				this.playerHand.addToStockWithId( cardUniqueId, cardId, 'myhand'); // Pull back
+				this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 				this.myPrepJoker.removeFromStockById( cardId );
 
 console.log( cardUniqueId ) ;
@@ -263,7 +263,7 @@ console.log( card ) ;
 						cardId = card[0].id;
 console.log( cardUniqueId ) ;
 console.log( cardId ) ;
-						this.playerHand.addToStockWithId( cardUniqueId, cardId, 'myhand'); // Pull back
+						this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 						this.myPrepJoker.removeFromStockById( cardId );
 //					}
 

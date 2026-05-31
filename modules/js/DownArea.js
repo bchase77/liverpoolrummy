@@ -265,7 +265,7 @@ console.log( cardId );
 console.log( card.id );
 
 //					this.playerHand.addToStockWithId( cardUniqueId, cardId, 'myhand'); // Pull back to hand
-					this.playerHand.addToStockWithId( cardUniqueId, cardId, $('myhand')); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 					// this.downArea_A_[ this.player_id ].removeFromStockById( card.id );
 					// this.downArea_A_[ this.player_id ].unselectAll();
 					this.myPrepA.removeFromStockById( card.id );
@@ -282,7 +282,7 @@ console.log( cardUniqueId );
 console.log( cardId );
 console.log( card.id );
 
-					this.playerHand.addToStockWithId( cardUniqueId, cardId, 'myhand'); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 					// this.downArea_B_[ this.player_id ].removeFromStockById( card.id );
 					// this.downArea_B_[ this.player_id ].unselectAll();
 					this.myPrepB.removeFromStockById( card.id );
@@ -298,7 +298,7 @@ console.log( card );
 console.log( cardUniqueId );
 console.log( cardId );
 console.log( card.id );
-					this.playerHand.addToStockWithId( cardUniqueId, cardId, 'myhand'); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 					// this.downArea_C_[ this.player_id ].removeFromStockById( card.id );
 					// this.downArea_C_[ this.player_id ].unselectAll();
 					this.myPrepC.removeFromStockById( card.id );
@@ -315,7 +315,7 @@ console.log( cardUniqueId );
 console.log( cardId );
 console.log( card.id );
 
-					this.playerHand.addToStockWithId( cardUniqueId, cardId, 'myhand'); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, cardId, $('myhand') );
 					// this.downArea_C_[ this.player_id ].removeFromStockById( card.id );
 					// this.downArea_C_[ this.player_id ].unselectAll();
 					this.myPrepJoker.removeFromStockById( card.id );

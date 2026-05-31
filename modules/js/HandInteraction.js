@@ -146,6 +146,40 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 /////////
 /////////
 /////////
+		// Add a card to the rightmost slot of the hand without disturbing other cards.
+		// Replaces direct playerHand.addToStockWithId calls for "pull back from prep" ops.
+		addCardToHandRightmost : function( cardUniqueId, cardId, fromEl ) {
+			// Give every existing card a sequential weight matching its current visual slot.
+			// This prevents BGA's updateDisplay() (fired inside addToStockWithId) from
+			// reordering cards that already have the correct layout.
+			var ordered = this.playerHand.getAllItems();
+			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
+				for ( var k = 0; k < ordered.length; k++ ) {
+					if ( String(this.playerHand.items[j].id) === String(ordered[k].id) ) {
+						this.playerHand.items[j].weight = k;
+						break;
+					}
+				}
+			}
+
+			// Temporarily raise this type's weight so the new card lands at the end.
+			var endWeight = ordered.length;
+			var savedWeight = null;
+			if ( this.playerHand.item_type && this.playerHand.item_type[cardUniqueId] ) {
+				savedWeight = this.playerHand.item_type[cardUniqueId].weight;
+				this.playerHand.item_type[cardUniqueId].weight = endWeight;
+			}
+
+			this.playerHand.addToStockWithId( cardUniqueId, cardId, fromEl || $('myhand') );
+
+			// Restore the type's original weight (the inserted item keeps weight=endWeight).
+			if ( savedWeight !== null ) {
+				this.playerHand.item_type[cardUniqueId].weight = savedWeight;
+			}
+		},
+/////////
+/////////
+/////////
 		clearButtons : function () {
 console.log( "[bmc] ENTER clearButtons" );
 		    this.removeActionButtons();

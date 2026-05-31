@@ -1018,7 +1018,7 @@ console.log("[bmc] sortHand from:", items[0].id, "to:", items[1].id);
 			// Enable CSS transitions so the left assignment below slides instead of jumps.
 			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
 				var el = $('myhand_item_' + thisPlayerHand[i].id);
-				if ( el ) el.style.transition = 'left 0.25s ease';
+				if ( el ) el.style.transition = 'left 0.5s ease';
 			}
 
 			// Assign each card the position its slot had before the move.
@@ -1045,14 +1045,19 @@ console.log("[bmc] sortHand from:", items[0].id, "to:", items[1].id);
 				}
 			}
 
-			// Remove transitions after animation completes.
+			// Remove transitions and fix z-index after animation completes.
+			// Each card's z-index must match its new position (leftmost=1) so cards
+			// that slid left don't cover their right neighbors.
 			var cardIds = thisPlayerHand.map(function(c) { return c.id; });
 			setTimeout(function() {
 				for ( var k = 0; k < cardIds.length; k++ ) {
 					var cleanEl = $('myhand_item_' + cardIds[k]);
-					if ( cleanEl ) cleanEl.style.transition = '';
+					if ( cleanEl ) {
+						cleanEl.style.transition = '';
+						cleanEl.style.zIndex = k + 1;
+					}
 				}
-			}, 300);
+			}, 550);
 		},
 /////////
 /////////
