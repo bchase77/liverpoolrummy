@@ -373,9 +373,14 @@ self::trace("[bmc] Deadlock:2179");
 /////
 //	function notBuyRequest( $player_id ) { 
 	#[CheckAction(false)]
-	public function actNotBuyRequest() { 
+	public function actNotBuyRequest() {
 		$player_id = $this->getCurrentPlayerId(); // CURRENT!!! not active
 		self::dump("[bmc] ENTER ActNotBuyRequest:", $player_id );
+		$players = self::loadPlayersBasicInfos();
+		if ( !array_key_exists( $player_id, $players ) ) {
+			self::trace("[bmc] Zombie player actNotBuyRequest ignored");
+			return;
+		}
 		self::setPlayerBuying( $player_id, 1 ); // (0==unknown, 1==Not buying 2==Buying)
 		// self::setPlayerBuyingGS( $player_id, 1 ); // (0==unknown, 1==Not buying 2==Buying)
 		$this->notifyPlayerWantsToNotBuy( $player_id );
@@ -698,7 +703,13 @@ self::trace("[bmc] Deadlock:2179");
 	function buyRequestFinish( $player_id ) {
 		self::trace("[bmc] ENTER buyRequestFinish");
 		self::dump("[bmc] player_id:", $player_id);
-				
+
+		$players = self::loadPlayersBasicInfos();
+		if ( !array_key_exists( $player_id, $players ) ) {
+			self::trace("[bmc] Zombie player buyRequestFinish ignored");
+			return;
+		}
+
 		// If there aren't enough cards, don't allow it
 		$countDeck = self::getGameStateValue( 'countDeck' );
 		$countDiscardPile = self::getGameStateValue( 'countDiscardPile' );

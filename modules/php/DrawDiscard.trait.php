@@ -390,7 +390,20 @@ trait DrawDiscard {
 
 			$topDeck = $this->cards->getCardOnTop( 'deck' );
 			// self::dump( "[bmc] topDeck: ", $topDeck );
-			
+
+			if ( $topDeck === null ) {
+				// Both deck and discard pile are empty; skip the draw
+				self::notifyAllPlayers( 'noDraw',
+					clienttranslate( '${player_name} cannot draw — no cards remain. Skipping draw.' ),
+					array(
+						'player_id'   => $player_id,
+						'player_name' => self::getActivePlayerName(),
+					)
+				);
+				$this->gamestate->nextState( 'drawCard' ); // Proceed to playerTurnPlay
+				return;
+			}
+
 			$card_id = $topDeck[ 'id' ];
 		}
 		

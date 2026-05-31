@@ -87,6 +87,13 @@ console.log("[bmc] notif_gameOptions", notif);
 /////////
 /////////
 /////////
+		notif_noDraw : function( notif ){
+console.log("[bmc] notif_noDraw", notif);
+			// Log-only; no card animation needed.
+		},
+/////////
+/////////
+/////////
 		notif_cardsPlayedMultiple : function( notif ){
 console.log("[bmc] notif_cardsPlayedMultiple", notif);
 			// Log-only summary; individual cardPlayed notifications handle card animation.
@@ -160,6 +167,7 @@ console.log( '[bmc] ENTER notifications subscriptions setup' );
 			dojo.subscribe( 'savePrepDone',        this, "notif_savePrepDone");
 			dojo.subscribe( 'gameOptions',         this, "notif_gameOptions");
 			dojo.subscribe( 'cardsPlayedMultiple', this, "notif_cardsPlayedMultiple");
+			dojo.subscribe( 'noDraw',             this, "notif_noDraw");
 			//dojo.subscribe( 'wishListCleared',     this, "notif_wishListCleared");
 
             // TODO: here, associate your game notifications with local methods
