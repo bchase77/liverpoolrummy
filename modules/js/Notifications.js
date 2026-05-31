@@ -87,6 +87,19 @@ console.log("[bmc] notif_gameOptions", notif);
 /////////
 /////////
 /////////
+		notif_cardsPlayedMultiple : function( notif ){
+console.log("[bmc] notif_cardsPlayedMultiple", notif);
+			// Log-only summary; individual cardPlayed notifications handle card animation.
+			for ( var p_id in notif.args.allHands ) {
+				this.handCount[ p_id ].setValue( notif.args.allHands[ p_id ] );
+			}
+			if ( notif.args.allHands[ this.player_id ] != undefined ) {
+				this.myHandSize.setValue( notif.args.allHands[ this.player_id ] );
+			}
+		},
+/////////
+/////////
+/////////
 		notif_updateBuyers : function( notif ){
 console.log("[bmc] updateBuyers");
 console.log(notif.args.player_id);
@@ -146,6 +159,7 @@ console.log( '[bmc] ENTER notifications subscriptions setup' );
 			dojo.subscribe( 'loadPrepDone',        this, "notif_loadPrepDone");
 			dojo.subscribe( 'savePrepDone',        this, "notif_savePrepDone");
 			dojo.subscribe( 'gameOptions',         this, "notif_gameOptions");
+			dojo.subscribe( 'cardsPlayedMultiple', this, "notif_cardsPlayedMultiple");
 			//dojo.subscribe( 'wishListCleared',     this, "notif_wishListCleared");
 
             // TODO: here, associate your game notifications with local methods

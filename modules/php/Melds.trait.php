@@ -198,7 +198,7 @@ trait Melds {
 	// Start change for playing multiple Nov 2022.
 			if ( $this->checkRun( $boardPlusHandCards, true ) == true ) {
 				self::dump("[bmc] checkRun passed as true:", $boardPlusHandCards );
-				
+
 				if ( count( $boardPlusHandCards ) > 14 ) { // Could have A234 up to JQKA, so 14 cards is OK
 					throw new BgaUserException( self::_('Cannot play there. That board area is full.') );
 				}
@@ -207,24 +207,31 @@ trait Melds {
 				foreach( $handCards as $card ) {
 					self::dump("[bmc] PlayMultiple:", $card );
 					self::dump("[bmc] PlayMultiple:", $card['id'] );
-					// Together all cards are a run so put the hand cards each down
 					$playWeight = $this->cards->countCardInLocation($boardArea) + 100;
-					
-					$this->playOnRunAndNotify( $card['id'], $boardArea, $boardPlayer, $playWeight, $player_id, $card, true );
-
+					$this->playOnRunAndNotify( $card['id'], $boardArea, $boardPlayer, $playWeight, $player_id, $card, true, true );
 				}
 			} else if ( $this->checkSet( $boardPlusHandCards ) == true ) {
 				self::trace( "[bmc] Playing multiple on set." );
 				foreach( $handCards as $card ) {
 					self::dump("[bmc] PlayMultiple:", $card );
 					self::dump("[bmc] PlayMultiple:", $card['id'] );
-					$this->playCardFinish( $card['id'], $player_id, $boardArea, $boardPlayer, false );
+					$this->playCardFinish( $card['id'], $player_id, $boardArea, $boardPlayer, false, true );
 				}
 			} else {
 				// Throw exception that it's not a set nor a run
 				throw new BgaUserException( self::_('Cannot play those cards on that meld.') );
 				return;
 			}
+			$cardsByLocation = $this->cards->countCardsByLocationArgs( 'hand' );
+			self::notifyAllPlayers( 'cardsPlayedMultiple',
+				clienttranslate( '${player_name} Played ${count} cards' ),
+				array(
+					'player_id'   => $player_id,
+					'player_name' => self::getActivePlayerName(),
+					'count'       => count( $handCards ),
+					'allHands'    => $cardsByLocation,
+				)
+			);
 		} else {
 			// Cannot play more than 1 card from a Liverpool declaration
 			throw new BgaUserException( self::_('After Liverpool, only 1 card is allowed to be played.') );
@@ -255,7 +262,7 @@ trait Melds {
 ////
 ////
 ////
-	function playCardFinish( $card_id, $player_id, $boardArea, $boardPlayer, $dontSwapForJoker ) {
+	function playCardFinish( $card_id, $player_id, $boardArea, $boardPlayer, $dontSwapForJoker, $silent = false ) {
 		// self::trace( "[bmc] ENTER playCardFinish" );
 		self::trace("'<span style='color:red'>[bmc] ENTER playCardFinish</span>'");
 		// Validate the player has the card in hand
@@ -436,9 +443,9 @@ trait Melds {
 				$player_name = self::getActivePlayerName();
 
 				self::notifyAllPlayers( 'cardPlayed',
-					clienttranslate( '${player_name} Played ${value_displayed} ${connector} ${color_displayed}' ),
+					$silent ? '' : clienttranslate( '${player_name} Played ${value_displayed} ${connector} ${color_displayed}' ),
 					array (
-						'i18n' => array( 'color_displayed', 'value_displayed', 'connector' ), 
+						'i18n' => array( 'color_displayed', 'value_displayed', 'connector' ),
 						'card_id' => $card_id,
 						'player_id' => $player_id,
 						'player_name' => self::getActivePlayerName(),
@@ -550,7 +557,7 @@ trait Melds {
 ////
 ////
 ////
-	function playOnRunAndNotify( $card_id, $boardArea, $boardPlayer, $playWeight, $player_id, $currentCard, $doLPCheck ) {
+	function playOnRunAndNotify( $card_id, $boardArea, $boardPlayer, $playWeight, $player_id, $currentCard, $doLPCheck, $silent = false ) {
 		//self::trace("[bmc] ENTER playOnRunAndNotify.");
 		self::trace("'<span style='color:red'><b>[bmc] ENTER playOnRunAndNotify</b></span>'");
 		
@@ -589,7 +596,7 @@ trait Melds {
 			$player_name = self::getActivePlayerName();
 
 			self::notifyAllPlayers( 'cardPlayed',
-				clienttranslate( '${player_name} Played: ${value_displayed} ${connector} ${color_displayed}'),
+				$silent ? '' : clienttranslate( '${player_name} Played: ${value_displayed} ${connector} ${color_displayed}'),
 				array (
 					'i18n' => array( 'color_displayed', 'value_displayed', 'connector' ),
 					'card_id' => $card_id,
