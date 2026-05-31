@@ -147,34 +147,61 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 /////////
 /////////
 		// Add a card to the rightmost slot of the hand without disturbing other cards.
-		// Replaces direct playerHand.addToStockWithId calls for "pull back from prep" ops.
+		// Suppresses playerHand.updateDisplay() during the add (which would reposition
+		// everything due to BGA's centering recalculation), then manually places the new
+		// card at rightmost position and updates internal weights for future renders.
 		addCardToHandRightmost : function( cardUniqueId, cardId, fromEl ) {
-			// Give every existing card a sequential weight matching its current visual slot.
-			// This prevents BGA's updateDisplay() (fired inside addToStockWithId) from
-			// reordering cards that already have the correct layout.
-			var ordered = this.playerHand.getAllItems();
+			var existingItems = this.playerHand.getAllItems();
+
+			// Compute target left for new card: last card's left + one step.
+			// Derive step from the last two cards' positions; fall back to 50% overlap.
+			var step = Math.round(this.cardwidth * 0.5);
+			var targetLeft = 0;
+			if ( existingItems.length > 0 ) {
+				var lastEl = $('myhand_item_' + existingItems[existingItems.length - 1].id);
+				var lastLeft = lastEl ? ( parseInt(lastEl.style.left) || lastEl.offsetLeft || 0 ) : 0;
+				if ( existingItems.length >= 2 ) {
+					var prevEl = $('myhand_item_' + existingItems[existingItems.length - 2].id);
+					if ( prevEl ) {
+						var prevLeft = parseInt(prevEl.style.left) || prevEl.offsetLeft || 0;
+						if ( lastLeft - prevLeft > 0 ) step = lastLeft - prevLeft;
+					}
+				}
+				targetLeft = lastLeft + step;
+			}
+
+			// Assign sequential weights to existing items so future updateDisplay() calls
+			// preserve their current visual order (not the original type-based sort order).
 			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
-				for ( var k = 0; k < ordered.length; k++ ) {
-					if ( String(this.playerHand.items[j].id) === String(ordered[k].id) ) {
+				for ( var k = 0; k < existingItems.length; k++ ) {
+					if ( String(this.playerHand.items[j].id) === String(existingItems[k].id) ) {
 						this.playerHand.items[j].weight = k;
 						break;
 					}
 				}
 			}
 
-			// Temporarily raise this type's weight so the new card lands at the end.
-			var endWeight = ordered.length;
-			var savedWeight = null;
-			if ( this.playerHand.item_type && this.playerHand.item_type[cardUniqueId] ) {
-				savedWeight = this.playerHand.item_type[cardUniqueId].weight;
-				this.playerHand.item_type[cardUniqueId].weight = endWeight;
+			// Suppress updateDisplay so the add never repositions existing cards.
+			var origUpdate = this.playerHand.updateDisplay.bind(this.playerHand);
+			this.playerHand.updateDisplay = function() {};
+			this.playerHand.addToStockWithId( cardUniqueId, cardId, fromEl || $('myhand') );
+			this.playerHand.updateDisplay = origUpdate;
+
+			// Move new item to end of items array with highest weight.
+			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
+				if ( String(this.playerHand.items[j].id) === String(cardId) ) {
+					this.playerHand.items[j].weight = existingItems.length;
+					var inserted = this.playerHand.items.splice(j, 1)[0];
+					this.playerHand.items.push(inserted);
+					break;
+				}
 			}
 
-			this.playerHand.addToStockWithId( cardUniqueId, cardId, fromEl || $('myhand') );
-
-			// Restore the type's original weight (the inserted item keeps weight=endWeight).
-			if ( savedWeight !== null ) {
-				this.playerHand.item_type[cardUniqueId].weight = savedWeight;
+			// Place the new card at the rightmost slot with correct z-index.
+			var newEl = $('myhand_item_' + cardId);
+			if ( newEl ) {
+				newEl.style.left   = targetLeft + 'px';
+				newEl.style.zIndex = existingItems.length + 1;
 			}
 		},
 /////////

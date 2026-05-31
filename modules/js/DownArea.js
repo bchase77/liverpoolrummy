@@ -444,7 +444,7 @@ console.log("[bmc] Clear this.prepAreas3");
 				for ( card of cards ) {
 					console.log(card);
 					cardUniqueId = card.type;
-					this.playerHand.addToStockWithId( cardUniqueId, card.id, 'myhand' ); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, card.id, $('myhand') );
 				}
 //				this.downArea_A_[ player_id ].removeAllTo( 'myhand' );
 				this.myPrepA.removeAllTo( 'myhand' );
@@ -456,7 +456,7 @@ console.log("[bmc] Clear this.prepAreas3");
 				for ( card of cards ) {
 					console.log(card);
 					cardUniqueId = card.type;
-					this.playerHand.addToStockWithId( cardUniqueId, card.id, 'myhand' ); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, card.id, $('myhand') );
 				}
 //				this.downArea_B_[ player_id ].removeAllTo( 'myhand' );
 				this.myPrepB.removeAllTo( 'myhand' );
@@ -468,7 +468,7 @@ console.log("[bmc] Clear this.prepAreas3");
 				for ( card of cards ) {
 					console.log(card);
 					cardUniqueId = card.type;
-					this.playerHand.addToStockWithId( cardUniqueId, card.id, 'myhand' ); // Pull back to hand
+					this.addCardToHandRightmost( cardUniqueId, card.id, $('myhand') );
 				}
 //				this.downArea_C_[ player_id ].removeAllTo( 'myhand' );
 				this.myPrepC.removeAllTo( 'myhand' );
