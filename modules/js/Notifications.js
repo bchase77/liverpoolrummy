@@ -80,6 +80,13 @@ console.log(notif);
 /////////
 /////////
 /////////
+		notif_gameOptions : function( notif ){
+console.log("[bmc] notif_gameOptions", notif);
+			// Log-only notification; no client action needed.
+		},
+/////////
+/////////
+/////////
 		notif_updateBuyers : function( notif ){
 console.log("[bmc] updateBuyers");
 console.log(notif.args.player_id);
@@ -138,6 +145,7 @@ console.log( '[bmc] ENTER notifications subscriptions setup' );
 			dojo.subscribe( 'liverpoolMissed',     this, "notif_liverpoolMissed");
 			dojo.subscribe( 'loadPrepDone',        this, "notif_loadPrepDone");
 			dojo.subscribe( 'savePrepDone',        this, "notif_savePrepDone");
+			dojo.subscribe( 'gameOptions',         this, "notif_gameOptions");
 			//dojo.subscribe( 'wishListCleared',     this, "notif_wishListCleared");
 
             // TODO: here, associate your game notifications with local methods

@@ -311,6 +311,10 @@ trait Scoring {
 		self::dump( "[bmc] this->handTypes[]:", $this->handTypes );
 		self::dump( "[bmc] count( this->handTypes):", count( $this->handTypes ));
 
+		if ( $currentHandType == 0 ) {
+			$this->notifyGameOptions();
+		}
+
 		//Notify all players of their cards plus the deck and the discard pile
 		$handTarget = $this->handTypes[$currentHandType]["Target"]; // Pull the description
 		
@@ -687,5 +691,33 @@ trait Scoring {
 			
 			self::applyDbUpgradeToAllDB( $sql );
         }
+	}
+////
+////
+////
+	function notifyGameOptions() {
+		$numberOfDecks = self::getGameStateValue( 'numberOfDecks' );
+
+		$jokerOption = self::getGameStateValue( 'numberOfJokers' );
+		$jokers = ( $jokerOption == 10 ) ? ( $numberOfDecks * 2 ) . ' (all)' : $jokerOption;
+
+		$lp      = self::getGameStateValue( 'LiverpoolConsequence' ) == 0 ? 'Bonus to caller' : 'Penalty to discarder';
+		$buys    = self::getGameStateValue( 'numberOfBuys' )         == 0 ? '3 per hand'      : 'Unlimited';
+		$deal11  = self::getGameStateValue( 'alwaysDeal11' )         == 1 ? 'Yes'             : 'No';
+		$wishList = self::getGameStateValue( 'enableWishList' )      == 1 ? 'Enabled'         : 'Disabled';
+		$jokerSwap = self::getGameStateValue( 'allowJokerSwapping' ) == 1 ? 'Allowed'         : 'Not allowed';
+
+		self::notifyAllPlayers( 'gameOptions',
+			clienttranslate( 'Game options — Liverpool: ${liverpool} | Decks: ${decks} | Jokers: ${jokers} | Buys: ${buys} | Always deal 11: ${deal11} | Wish list: ${wishList} | Joker swapping: ${jokerSwap}' ),
+			array(
+				'liverpool' => $lp,
+				'decks'     => $numberOfDecks,
+				'jokers'    => $jokers,
+				'buys'      => $buys,
+				'deal11'    => $deal11,
+				'wishList'  => $wishList,
+				'jokerSwap' => $jokerSwap,
+			)
+		);
 	}
 }
