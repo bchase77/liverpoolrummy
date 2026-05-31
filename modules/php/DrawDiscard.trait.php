@@ -392,15 +392,13 @@ trait DrawDiscard {
 			// self::dump( "[bmc] topDeck: ", $topDeck );
 
 			if ( $topDeck === null ) {
-				// Both deck and discard pile are empty; skip the draw
+				// Both deck and discard pile are empty — end the hand
 				self::notifyAllPlayers( 'noDraw',
-					clienttranslate( '${player_name} cannot draw — no cards remain. Skipping draw.' ),
-					array(
-						'player_id'   => $player_id,
-						'player_name' => self::getActivePlayerName(),
-					)
+					clienttranslate( 'No cards left to draw. Ending the hand.' ),
+					array()
 				);
-				$this->gamestate->nextState( 'drawCard' ); // Proceed to playerTurnPlay
+				self::setGameStateValue( 'shuffleCount', 99 ); // Force stNextPlayer to take the endHand branch
+				$this->gamestate->nextState( 'emptyDeck' ); // → stNextPlayer → endHand
 				return;
 			}
 

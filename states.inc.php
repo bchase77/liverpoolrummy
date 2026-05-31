@@ -80,7 +80,7 @@ $machinestates = array(
         "possibleactions" => array( "actDrawCard", "actBuyRequest", "actNotBuyRequest", "zombiePass", "actLiverpoolButton", "liverpoolBonus", "liverpoolPenalty" ),
 //        "possibleactions" => array( "drawCard", "buyRequest", "notBuyRequest", "zombiePass", "liverpoolBonus", "liverpoolPenalty" ),
         // "possibleactions" => array( "drawCard", "buyRequest", "notBuyRequest", "zombiePass", "liverpool" ),
-        "transitions" => array( "drawCard" => 35, "zombiePass" => 37, "liverpoolBonus" => 50, "liverpoolPenalty" => 60 )
+        "transitions" => array( "drawCard" => 35, "zombiePass" => 37, "emptyDeck" => 37, "liverpoolBonus" => 50, "liverpoolPenalty" => 60 )
         // "transitions" => array( "drawCard" => 35, "zombiePass" => 37 )
     ),
     35 => array(
