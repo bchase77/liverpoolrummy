@@ -147,11 +147,14 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 /////////
 /////////
 		// Add a card to the rightmost slot of the hand without disturbing other cards.
-		// BGA creates the card DOM element inside updateDisplay(), so we cannot suppress it.
-		// Instead: snapshot existing positions, let addToStockWithId run (and reposition
-		// everything), then immediately restore each existing card to its pre-add position
-		// and place the new card at the rightmost slot.  All synchronous — browser paints
-		// only the final state.
+		//
+		// Key insight: if addToStockWithId inserts the new card anywhere other than the END
+		// of this.items, BGA triggers dojo slide animations on every card whose index
+		// changes — those async animations override any synchronous position restoration.
+		// So we MUST guarantee the new card lands at index n (the end) by temporarily
+		// setting its item_type weight higher than all existing items.
+		//
+		// Snapshot+restore handles any residual centering-margin shift from updateDisplay.
 		addCardToHandRightmost : function( cardUniqueId, cardId ) {
 			var existingItems = this.playerHand.getAllItems();
 
@@ -174,34 +177,32 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 				targetLeft = lastLeft + step;
 			}
 
-			// Assign sequential weights so future updateDisplay() preserves visual order.
+			// Assign sequential weights 0..n-1 to existing items so the new card's
+			// type weight of n is guaranteed to be the highest → inserted at the end.
 			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
-				for ( var k = 0; k < existingItems.length; k++ ) {
-					if ( String(this.playerHand.items[j].id) === String(existingItems[k].id) ) {
-						this.playerHand.items[j].weight = k;
-						break;
-					}
-				}
+				this.playerHand.items[j].weight = j;
+			}
+			var endWeight = existingItems.length;
+			var savedWeight = null;
+			if ( this.playerHand.item_type && this.playerHand.item_type[cardUniqueId] ) {
+				savedWeight = this.playerHand.item_type[cardUniqueId].weight;
+				this.playerHand.item_type[cardUniqueId].weight = endWeight;
 			}
 
-			// Add card without a 'from' animation element — card appears directly.
-			// updateDisplay() runs internally and creates the DOM element.
+			// Add card — new card goes to END of items, no existing card changes index,
+			// so BGA triggers NO slide animations on existing cards.
 			this.playerHand.addToStockWithId( cardUniqueId, cardId );
 
-			// Restore each existing card to its pre-add position (updateDisplay shifted them).
+			// Restore type weight (the inserted item already carries weight=endWeight).
+			if ( savedWeight !== null ) {
+				this.playerHand.item_type[cardUniqueId].weight = savedWeight;
+			}
+
+			// Restore each existing card to its pre-add position.
+			// This corrects any centering-margin shift from updateDisplay().
 			for ( var id in snapshot ) {
 				var el = $('myhand_item_' + id);
 				if ( el ) el.style.left = snapshot[id] + 'px';
-			}
-
-			// Move new item to end of items array with highest weight.
-			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
-				if ( String(this.playerHand.items[j].id) === String(cardId) ) {
-					this.playerHand.items[j].weight = existingItems.length;
-					var inserted = this.playerHand.items.splice(j, 1)[0];
-					this.playerHand.items.push(inserted);
-					break;
-				}
 			}
 
 			// Place the new card at the rightmost slot with correct z-index.
