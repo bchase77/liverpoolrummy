@@ -354,7 +354,7 @@ individually display or hide the element.
 
 /* Card selected (first click) — red outline, ready for prep or to enter hold mode */
 .card-selected {
-    box-shadow: 0 0 0 3px red, 0 0 8px rgba(255, 0, 0, 0.35) !important;
+    box-shadow: 0 0 0 5px red, 0 0 10px rgba(255, 0, 0, 0.4) !important;
     transition: box-shadow 0.1s ease;
 }
 

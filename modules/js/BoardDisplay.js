@@ -1009,9 +1009,18 @@ console.log("[bmc] cardIds: " + cardIds );
 
 			// For identical cards (same type), also reorder the stock's internal
 			// items array so the stable sort in changeItemsWeight preserves the
-			// new relative order between same-weight items.
-			if ( items[0].type === items[1].type ) {
-				this.arraymove( this.playerHand.items, spotFrom, spotTo );
+			// new relative order. The internal array may be in a different order
+			// than getAllItems(), so find positions by id rather than reusing
+			// spotFrom/spotTo.
+			if ( items[0].type === items[1].type && this.playerHand.items ) {
+				var internalFrom = -1, internalTo = -1;
+				for ( var j = 0; j < this.playerHand.items.length; j++ ) {
+					if ( String(this.playerHand.items[j].id) === String(items[0].id) ) internalFrom = j;
+					if ( String(this.playerHand.items[j].id) === String(items[1].id) ) internalTo   = j;
+				}
+				if ( internalFrom !== -1 && internalTo !== -1 ) {
+					this.arraymove( this.playerHand.items, internalFrom, internalTo );
+				}
 			}
 
 			let weightChange = {};

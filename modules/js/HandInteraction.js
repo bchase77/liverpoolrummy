@@ -95,12 +95,20 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 			var el = $('myhand_item_' + cardId);
 			if ( !el ) { this.showHideButtons(); return; }
 
+			// Clicking any card clears the "new card" green highlight
+			var allHandCards = this.playerHand.getAllItems();
+			for ( var k = 0; k < allHandCards.length; k++ ) {
+				var hel = $('myhand_item_' + allHandCards[k].id);
+				if ( hel ) dojo.removeClass( hel, 'stockitem_newcard' );
+			}
+
 			if ( this.heldCardId ) {
 				if ( String(this.heldCardId) === String(cardId) ) {
 					// Click held card → step back to selected (red)
 					dojo.removeClass( el, 'card-held' );
 					this.heldCardId = null;
-					this.selectedCardIds = [String(cardId)];
+					// selectedCardIds already contains this card from when we entered hold mode;
+					// just restore the red CSS
 					dojo.addClass( el, 'card-selected' );
 				} else {
 					// Click different card → sort held card to this position
@@ -118,8 +126,16 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 					this.unselectAllCards();
 				}
 			} else if ( this.selectedCardIds.indexOf(String(cardId)) !== -1 ) {
-				// Already selected → enter hold mode (blue, elevated)
-				this.unselectAllCards(); // clear other selections
+				// Already selected (red) → enter hold mode (blue, elevated)
+				// Clear other red selections but KEEP this card in selectedCardIds
+				// so getSelectedItems() still returns it for discard/board-play.
+				var others = this.selectedCardIds.filter(function(id) { return id !== String(cardId); });
+				for ( var j = 0; j < others.length; j++ ) {
+					var oEl = $('myhand_item_' + others[j]);
+					if ( oEl ) dojo.removeClass( oEl, 'card-selected' );
+				}
+				this.selectedCardIds = [String(cardId)]; // keep only this one
+				dojo.removeClass( el, 'card-selected' );
 				dojo.addClass( el, 'card-held' );
 				this.heldCardId = cardId;
 			} else {
