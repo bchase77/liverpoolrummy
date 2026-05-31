@@ -148,17 +148,17 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 /////////
 		// Add a card to the rightmost slot of the hand without disturbing other cards.
 		//
-		// Key insight: if addToStockWithId inserts the new card anywhere other than the END
-		// of this.items, BGA triggers dojo slide animations on every card whose index
-		// changes — those async animations override any synchronous position restoration.
-		// So we MUST guarantee the new card lands at index n (the end) by temporarily
-		// setting its item_type weight higher than all existing items.
+		// The only safe way to prevent BGA from animating existing cards is to ensure the
+		// new card inserts at the END of this.items (no existing card changes index).
+		// We do that by temporarily raising the new card's item_type weight above the
+		// current maximum — without touching any existing item weights (which caused
+		// the hand to resort in earlier attempts).
 		//
-		// Snapshot+restore handles any residual centering-margin shift from updateDisplay.
+		// Snapshot+restore handles any centering-margin shift from updateDisplay().
 		addCardToHandRightmost : function( cardUniqueId, cardId ) {
 			var existingItems = this.playerHand.getAllItems();
 
-			// Snapshot existing card positions and compute step / target left.
+			// Snapshot existing card positions and compute the target for the new card.
 			var snapshot = {};
 			var step = Math.round(this.cardwidth * 0.5);
 			var targetLeft = 0;
@@ -177,29 +177,26 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 				targetLeft = lastLeft + step;
 			}
 
-			// Assign sequential weights 0..n-1 to existing items so the new card's
-			// type weight of n is guaranteed to be the highest → inserted at the end.
+			// Find the current maximum weight among existing items (do NOT reassign them).
+			var maxWeight = -1;
 			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
-				this.playerHand.items[j].weight = j;
+				if ( this.playerHand.items[j].weight > maxWeight ) maxWeight = this.playerHand.items[j].weight;
 			}
-			var endWeight = existingItems.length;
+
+			// Temporarily set the new card's type weight above the max so it inserts last.
 			var savedWeight = null;
 			if ( this.playerHand.item_type && this.playerHand.item_type[cardUniqueId] ) {
 				savedWeight = this.playerHand.item_type[cardUniqueId].weight;
-				this.playerHand.item_type[cardUniqueId].weight = endWeight;
+				this.playerHand.item_type[cardUniqueId].weight = maxWeight + 1;
 			}
 
-			// Add card — new card goes to END of items, no existing card changes index,
-			// so BGA triggers NO slide animations on existing cards.
 			this.playerHand.addToStockWithId( cardUniqueId, cardId );
 
-			// Restore type weight (the inserted item already carries weight=endWeight).
 			if ( savedWeight !== null ) {
 				this.playerHand.item_type[cardUniqueId].weight = savedWeight;
 			}
 
-			// Restore each existing card to its pre-add position.
-			// This corrects any centering-margin shift from updateDisplay().
+			// Restore existing card positions (undoes any centering-margin shift).
 			for ( var id in snapshot ) {
 				var el = $('myhand_item_' + id);
 				if ( el ) el.style.left = snapshot[id] + 'px';
