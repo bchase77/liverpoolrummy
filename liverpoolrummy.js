@@ -1433,7 +1433,8 @@ console.log("[bmc] Doing the window.onload");
 			console.log( "Setting someoneLP false");
 
 			// Hand sort pick-up state
-			this.heldCardId = null; // id of card currently "held" for repositioning
+			this.heldCardId      = null; // id of card in hold/move mode (blue outline)
+			this.selectedCardIds = [];   // ids of cards with red-outline selection
 
 			// Run through the function onDiscardPileSelectionChanged only once by checking this variable
 			this.alreadyODPSC = false;

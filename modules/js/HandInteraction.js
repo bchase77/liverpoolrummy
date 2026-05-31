@@ -3,13 +3,13 @@ var LRHandInteraction = {
 		onMyHandAreaClick : function() {
 console.log("[bmc] ENTER onMyHandAreaClick");
 			this.cancelHeldCard();
-			this.playerHand.unselectAll();
+			this.unselectAllCards();
 			this.someoneLP = false;
-
 			var handCards = this.playerHand.getAllItems();
 			for ( let i in handCards ) {
 				dojo.removeClass('myhand_item_' + handCards[i]['id'], 'stockitem_newcard');
 			}
+			this.showHideButtons();
 console.log("[bmc] EXIT onMyHandAreaClick");
 		},
 /////////
@@ -18,72 +18,124 @@ console.log("[bmc] EXIT onMyHandAreaClick");
 		cancelHeldCard : function() {
 			if ( this.heldCardId ) {
 				var el = $('myhand_item_' + this.heldCardId);
-				if ( el ) {
-					dojo.removeClass( el, 'card-held' );
-				}
+				if ( el ) dojo.removeClass( el, 'card-held' );
 				this.heldCardId = null;
 			}
 		},
 /////////
 /////////
 /////////
-		// Sets up a capture-phase click listener on the hand container so we know
-		// exactly which card (by DOM id → card id) was clicked, regardless of how
-		// BGA's stock groups identical-type items for selection purposes.
-		setupHandHoldListener : function() {
-			$('myhand').addEventListener('click', dojo.hitch(this, function(evt) {
-				var target = evt.target;
-				while ( target && target.id !== 'myhand' ) {
-					if ( target.id && target.id.indexOf('myhand_item_') === 0 ) {
-						this.onHandCardHoldClick( target.id.replace('myhand_item_', ''), evt );
-						return;
-					}
-					target = target.parentElement;
-				}
-				// Clicked the hand area but not a card — cancel any active hold
-				this.cancelHeldCard();
-			}), true); // capture phase fires before BGA's bubble listeners
+		unselectAllCards : function() {
+			for ( var i = 0; i < this.selectedCardIds.length; i++ ) {
+				var el = $('myhand_item_' + this.selectedCardIds[i]);
+				if ( el ) dojo.removeClass( el, 'card-selected' );
+			}
+			this.selectedCardIds = [];
 		},
 /////////
 /////////
 /////////
+		// Sets up custom hand selection, bypassing BGA's type-based selection.
+		// - Mode 0 disables BGA's built-in selection visuals.
+		// - getSelectedItems is patched so all existing prep/discard code keeps working.
+		// - unselectAll is patched so prep buttons also clear our custom state.
+		// - A capture-phase listener identifies clicked cards by DOM id (works for
+		//   identical cards that share the same BGA type).
+		setupHandHoldListener : function() {
+			var self = this;
+
+			// Disable BGA's type-based selection entirely
+			this.playerHand.setSelectionMode(0);
+
+			// Patch getSelectedItems so existing code (prep, discard, showHideButtons)
+			// works against our selectedCardIds array instead of BGA's internal state.
+			this.playerHand.getSelectedItems = function() {
+				var allItems = self.playerHand.getAllItems();
+				return allItems.filter(function(item) {
+					return self.selectedCardIds.indexOf(String(item.id)) !== -1;
+				});
+			};
+
+			// Patch unselectAll so prep/discard button handlers also clear our state.
+			var origUnselectAll = this.playerHand.unselectAll.bind(this.playerHand);
+			this.playerHand.unselectAll = function() {
+				origUnselectAll();
+				self.cancelHeldCard();
+				self.unselectAllCards();
+			};
+
+			// Capture-phase listener: fires before BGA's bubble listeners, knows
+			// exactly which card was clicked by DOM element id.
+			$('myhand').addEventListener('click', function(evt) {
+				var target = evt.target;
+				while ( target && target.id !== 'myhand' ) {
+					if ( target.id && target.id.indexOf('myhand_item_') === 0 ) {
+						self.onHandCardHoldClick( target.id.replace('myhand_item_', ''), evt );
+						return;
+					}
+					target = target.parentElement;
+				}
+				// Clicked empty hand area
+				self.cancelHeldCard();
+				self.unselectAllCards();
+				self.showHideButtons();
+			}, true); // capture phase
+		},
+/////////
+/////////
+/////////
+		// State machine:
+		//   unselected  → click          → selected (red outline)
+		//   selected    → click same     → held (blue, elevated)
+		//   held        → click same     → selected (red outline, back one step)
+		//   held        → click other    → sort held card to that position
+		//   selected    → click other    → add that card to selection (multi-select for prep)
 		onHandCardHoldClick : function( cardId, evt ) {
 console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.heldCardId);
+			var el = $('myhand_item_' + cardId);
+			if ( !el ) { this.showHideButtons(); return; }
 
-			if ( !this.heldCardId ) {
-				// Nothing held → pick up this card
+			if ( this.heldCardId ) {
+				if ( String(this.heldCardId) === String(cardId) ) {
+					// Click held card → step back to selected (red)
+					dojo.removeClass( el, 'card-held' );
+					this.heldCardId = null;
+					this.selectedCardIds = [String(cardId)];
+					dojo.addClass( el, 'card-selected' );
+				} else {
+					// Click different card → sort held card to this position
+					var allItems = this.playerHand.getAllItems();
+					var heldItem = null, targetItem = null;
+					for ( var i = 0; i < allItems.length; i++ ) {
+						if ( String(allItems[i].id) === String(this.heldCardId) ) heldItem   = allItems[i];
+						if ( String(allItems[i].id) === String(cardId)          ) targetItem = allItems[i];
+					}
+					if ( heldItem && targetItem ) {
+						this.playerHand.firstSelected = heldItem.type;
+						this.sortHand( [heldItem, targetItem] );
+					}
+					this.cancelHeldCard();
+					this.unselectAllCards();
+				}
+			} else if ( this.selectedCardIds.indexOf(String(cardId)) !== -1 ) {
+				// Already selected → enter hold mode (blue, elevated)
+				this.unselectAllCards(); // clear other selections
+				dojo.addClass( el, 'card-held' );
 				this.heldCardId = cardId;
-				dojo.addClass( 'myhand_item_' + cardId, 'card-held' );
-				// Don't stop propagation — let BGA select the card so Discard button appears
-
-			} else if ( String(this.heldCardId) === String(cardId) ) {
-				// Same card clicked again → put it down / cancel
-				this.cancelHeldCard();
-				// Don't stop propagation — let BGA deselect normally
-
 			} else {
-				// Different card clicked → move held card to this position
-				var allItems = this.playerHand.getAllItems();
-				var heldItem = null, targetItem = null;
-				for ( var i = 0; i < allItems.length; i++ ) {
-					if ( String(allItems[i].id) === String(this.heldCardId) ) heldItem   = allItems[i];
-					if ( String(allItems[i].id) === String(cardId)          ) targetItem = allItems[i];
-				}
-				if ( heldItem && targetItem ) {
-					this.playerHand.firstSelected = heldItem.type;
-					this.sortHand( [heldItem, targetItem] );
-				}
-				this.cancelHeldCard();
-				this.playerHand.unselectAll();
-				evt.stopPropagation(); // Prevent BGA from re-selecting after the move
+				// Not selected → add to selection (red outline)
+				this.selectedCardIds.push( String(cardId) );
+				dojo.addClass( el, 'card-selected' );
 			}
+
+			this.showHideButtons();
 		},
 /////////
 /////////
 /////////
 		clearButtons : function () {
 console.log( "[bmc] ENTER clearButtons" );
-		    this.removeActionButtons(); // Remove the button because they discarded
+		    this.removeActionButtons();
 			dojo.replaceClass( 'buttonBuy',    "bgabutton_gray", "bgabutton_red" );
 			dojo.replaceClass( 'buttonNotBuy', "bgabutton_gray", "bgabutton_red" );
 		},
@@ -94,7 +146,7 @@ console.log( "[bmc] ENTER clearButtons" );
 console.log( "[bmc] ENTER onPlayerDiscardButton" );
 			var selectedDiscards = this.playerHand.getSelectedItems();
 console.log("selectedDiscards:", selectedDiscards);
-			this.playerHand.unselectAll();
+			this.playerHand.unselectAll(); // clears selectedCardIds + cancelHeldCard via patch
 			this.reallyDiscard( selectedDiscards );
 console.log( "[bmc] EXIT onPlayerDiscardButton" );
 		},
@@ -103,24 +155,18 @@ console.log( "[bmc] EXIT onPlayerDiscardButton" );
 /////////
 		reallyDiscard : function( selectedDiscards ) {
 console.log( "[bmc] ENTER reallyDiscard" );
-			this.cancelHeldCard(); // Always clear hold state when discarding
+			this.cancelHeldCard();
+			this.unselectAllCards();
 			this.discardPileOne.unselectAll();
-			this.playerHand.unselectAll();
 			this.clearButtons();
 
 			var card = selectedDiscards[0];
-			console.log(card);
-
 			this.firstLoad = 'No';
 
 			if ( typeof card !== "undefined" ) {
 				var card_id = card.id;
 console.log("[bmc] Discarding card:", card_id);
-
-				var newAction = 'actDiscardCard';
-				this.playerHand.unselectAll();
-
-				this.bgaPerformAction( newAction, {
+				this.bgaPerformAction( 'actDiscardCard', {
 					player_id : this.player_id,
 					card_id   : card_id,
 				});
@@ -131,9 +177,9 @@ console.log("[bmc] Discarding card:", card_id);
 /////////
 		onPlayerHandDoubleClick : function() {
 console.log("[bmc] ENTER onPlayerHandDoubleClick");
-            var cards = this.playerHand.getSelectedItems();
-console.log( cards );
-			if ( cards ) {
+			// Double-click is a fallback; primary sort UX is click-to-hold via onHandCardHoldClick.
+			var cards = this.playerHand.getSelectedItems();
+			if ( cards && cards.length === 2 ) {
 				this.onPlayerSortButton2( cards );
 			}
 console.log("[bmc] EXIT onPlayerHandDoubleClick");
@@ -142,34 +188,19 @@ console.log("[bmc] EXIT onPlayerHandDoubleClick");
 /////////
 /////////
         onPlayerHandSelectionChanged : function() {
-			console.log("[bmc] ENTER onPlayerHandSelectionChanged");
+			// With setSelectionMode(0), BGA may still fire this; use patched getSelectedItems.
+			console.log("[bmc] onPlayerHandSelectionChanged");
 			var items = this.playerHand.getSelectedItems();
 			var handCards = this.playerHand.getAllItems();
-
 			for ( let i in handCards ) {
 				dojo.removeClass('myhand_item_' + handCards[i]['id'], 'stockitem_newcard');
 			}
-console.log( items.length );
-			// Track firstSelected for sortHand's swap-order logic
 			if ( items.length > 0 ) {
 				this.playerHand.firstSelected = items[0].type;
 			}
-
 			this.showHideButtons();
-			console.log("[bmc] EXIT onPlayerHandSelectionChanged");
         },
 /////////
 /////////
 /////////
-        ///////////////////////////////////////////////////
-        //// Reaction to cometD notifications
-
-            // setupNotifications:
-
-            // In this method, you associate each of your game notifications with
-			// your local method to handle it.
-
-            // Note: game notification names correspond to "notifyAllPlayers" and
-			// "notifyPlayer" calls in your *.game.php file.
-
 };
