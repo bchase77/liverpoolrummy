@@ -1003,36 +1003,56 @@ console.log("[bmc] sortHand from:", items[0].id, "to:", items[1].id);
 				return;
 			}
 
-			// Snapshot each slot's current left position BEFORE reordering.
-			// After arraymove, slot i should display whichever card is now at index i,
-			// at the left value that slot i had before the move.
+			// Snapshot each card's current inline left position before reordering.
+			// BGA stock always sets el.style.left; fall back to offsetLeft if not yet set.
 			var slotLefts = [];
 			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
 				var el = $('myhand_item_' + thisPlayerHand[i].id);
-				slotLefts.push( el ? el.style.left : '0px' );
+				var left = 0;
+				if ( el ) left = el.style.left !== '' ? parseInt(el.style.left) : el.offsetLeft;
+				slotLefts.push( left );
 			}
 
 			this.arraymove( thisPlayerHand, spotFrom, spotTo );
 
-			// Assign each card its new left position directly — no removeAll,
-			// no changeItemsWeight, no blink, works for identical types too.
+			// Enable CSS transitions so the left assignment below slides instead of jumps.
 			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
 				var el = $('myhand_item_' + thisPlayerHand[i].id);
-				if ( el ) el.style.left = slotLefts[i];
+				if ( el ) el.style.transition = 'left 0.25s ease';
 			}
 
-			// Keep the internal items array consistent so future updateDisplay()
-			// calls (triggered by other code) maintain this order for same-weight items.
+			// Assign each card the position its slot had before the move.
+			for ( var i = 0; i < thisPlayerHand.length; i++ ) {
+				var el = $('myhand_item_' + thisPlayerHand[i].id);
+				if ( el ) el.style.left = slotLefts[i] + 'px';
+			}
+
+			// Re-sort the internal items array to match the new visual order and assign
+			// unique sequential weights so BGA re-renders never collapse same-type cards
+			// back to the same slot.
 			if ( this.playerHand.items ) {
-				var internalFrom = -1, internalTo = -1;
-				for ( var j = 0; j < this.playerHand.items.length; j++ ) {
-					if ( String(this.playerHand.items[j].id) === String(items[0].id) ) internalFrom = j;
-					if ( String(this.playerHand.items[j].id) === String(items[1].id) ) internalTo   = j;
+				var newOrder = {};
+				for ( var i = 0; i < thisPlayerHand.length; i++ ) {
+					newOrder[ String(thisPlayerHand[i].id) ] = i;
 				}
-				if ( internalFrom !== -1 && internalTo !== -1 ) {
-					this.arraymove( this.playerHand.items, internalFrom, internalTo );
+				this.playerHand.items.sort(function(a, b) {
+					var ai = newOrder.hasOwnProperty(String(a.id)) ? newOrder[String(a.id)] : 9999;
+					var bi = newOrder.hasOwnProperty(String(b.id)) ? newOrder[String(b.id)] : 9999;
+					return ai - bi;
+				});
+				for ( var j = 0; j < this.playerHand.items.length; j++ ) {
+					this.playerHand.items[j].weight = j;
 				}
 			}
+
+			// Remove transitions after animation completes.
+			var cardIds = thisPlayerHand.map(function(c) { return c.id; });
+			setTimeout(function() {
+				for ( var k = 0; k < cardIds.length; k++ ) {
+					var cleanEl = $('myhand_item_' + cardIds[k]);
+					if ( cleanEl ) cleanEl.style.transition = '';
+				}
+			}, 300);
 		},
 /////////
 /////////

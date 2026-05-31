@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -l *)",
+      "Bash(node --check *)",
+      "Bash(npm list *)"
+    ]
+  }
+}

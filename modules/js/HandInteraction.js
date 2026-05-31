@@ -87,7 +87,7 @@ console.log("[bmc] EXIT onMyHandAreaClick");
 		// State machine:
 		//   unselected  → click          → selected (red outline)
 		//   selected    → click same     → held (blue, elevated)
-		//   held        → click same     → selected (red outline, back one step)
+		//   held        → click same     → deselect everything
 		//   held        → click other    → sort held card to that position
 		//   selected    → click other    → add that card to selection (multi-select for prep)
 		onHandCardHoldClick : function( cardId, evt ) {
@@ -104,12 +104,9 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 
 			if ( this.heldCardId ) {
 				if ( String(this.heldCardId) === String(cardId) ) {
-					// Click held card → step back to selected (red)
-					dojo.removeClass( el, 'card-held' );
-					this.heldCardId = null;
-					// selectedCardIds already contains this card from when we entered hold mode;
-					// just restore the red CSS
-					dojo.addClass( el, 'card-selected' );
+					// Click held card again → cancel hold and deselect everything
+					this.cancelHeldCard();
+					this.unselectAllCards();
 				} else {
 					// Click different card → sort held card to this position
 					var allItems = this.playerHand.getAllItems();
