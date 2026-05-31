@@ -222,8 +222,7 @@ console.log(deckAllItems);
 			// Unlight the Liverpool button if lit up and if the discard was chosen
 			
 			if ( drawSource == 'discardPile' ) {
-//				dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red" ); // item, add, remove
-				dojo.replaceClass( 'buttonLiverpool', "bgabutton_blue", "bgabutton_red" ); // item, add, remove
+				dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red bgabutton_blue" ); // item, add, remove
 				this.gamedatas.liverpoolExists = false;
 				this.showHideButtons();
 			}

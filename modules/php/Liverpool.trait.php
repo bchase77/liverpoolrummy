@@ -1,4 +1,5 @@
 <?php
+use \Bga\GameFramework\Actions\CheckAction;
 
 trait Liverpool {
 	function argLiverpoolDrawPenaltyDiscarder() {
@@ -91,6 +92,7 @@ trait Liverpool {
 ////////
 ////////
 ////////
+	#[CheckAction(false)]
 	public function actLiverpoolButton( int $player_id ) { // From JS
 		self::trace("[bmc] ENTER liverpoolButton");
 		self::dump("[bmc] player_id:", $player_id);

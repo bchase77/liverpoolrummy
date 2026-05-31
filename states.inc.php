@@ -77,7 +77,7 @@ $machinestates = array(
         "type" => "activeplayer",
         "action" => "stShowBUYButtons", // ACTION: Do this upon entering the state
 		"args" => "argPlayerTurnDraw", // Set the handtarget and who can play
-        "possibleactions" => array( "actDrawCard", "actBuyRequest", "actNotBuyRequest", "zombiePass", "liverpoolBonus", "liverpoolPenalty" ),
+        "possibleactions" => array( "actDrawCard", "actBuyRequest", "actNotBuyRequest", "zombiePass", "actLiverpoolButton", "liverpoolBonus", "liverpoolPenalty" ),
 //        "possibleactions" => array( "drawCard", "buyRequest", "notBuyRequest", "zombiePass", "liverpoolBonus", "liverpoolPenalty" ),
         // "possibleactions" => array( "drawCard", "buyRequest", "notBuyRequest", "zombiePass", "liverpool" ),
         "transitions" => array( "drawCard" => 35, "zombiePass" => 37, "liverpoolBonus" => 50, "liverpoolPenalty" => 60 )
@@ -90,7 +90,7 @@ $machinestates = array(
         "type" => "activeplayer", //multipleactiveplayer
 		"action" => "stPlayerTurnPlay", // ACTION: Do this upon entering the state
 		"args" => "argPlayerTurnPlay",
-        "possibleactions" => array( "actPlayerGoDown", "actDiscardCard", 'actPlayCard', 'actPlayCardMultiple', "zombiePass", "actBuyRequest", "actNotBuyRequest", "liverpoolBonus", "liverpoolPenalty" ),
+        "possibleactions" => array( "actPlayerGoDown", "actDiscardCard", 'actPlayCard', 'actPlayCardMultiple', "zombiePass", "actBuyRequest", "actNotBuyRequest", "actLiverpoolButton", "liverpoolBonus", "liverpoolPenalty" ),
 //        "possibleactions" => array( "playerGoDown", "discardCard", 'playCard', 'playCardMultiple', "zombiePass", "buyRequest", "notBuyRequest", "liverpoolBonus", "liverpoolPenalty" ),
         "transitions" => array( "playerGoDown" => 35, "discardCard" => 36, "playCard" => 35, "playCardMultiple" => 35,
 			"zombiePass" => 37, "liverpoolBonus" => 50, "liverpoolPenalty" => 60 )

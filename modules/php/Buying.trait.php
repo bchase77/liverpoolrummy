@@ -707,6 +707,14 @@ self::trace("[bmc] Deadlock:2179");
 		
 		if ( $checkIfBuyingAllowed == 0 ) { // 0 == false; 1 == true
 			self::trace("[bmc] CHECKBUYINGALLOWEDYIELDEDNOTTRUE" );
+			$players = self::loadPlayersBasicInfos();
+			self::notifyAllPlayers( 'playerDidNotBuy',
+				clienttranslate( '${buyingPlayerName} tried but could not buy' ),
+				array(
+					'buyingPlayers' => [],
+					'buyingPlayerName' => $players[ $player_id ][ 'player_name' ]
+				)
+			);
 			throw new BgaUserException( self::_("That card cannot be bought.") );
 		}
 

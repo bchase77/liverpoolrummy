@@ -250,8 +250,7 @@ console.log("[bmc] drew from discardPile");
 			}
 
 			// Clear out the Liverpool condition (unlight the button)
-//			dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red" ); // item, add, remove
-			dojo.replaceClass( 'buttonLiverpool', "bgabutton_blue", "bgabutton_red" ); // item, add, remove
+			dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red bgabutton_blue" ); // item, add, remove
 
 			// Steadily increment every time a card is drawn to set the weight properly
 			this.drawCounter++;

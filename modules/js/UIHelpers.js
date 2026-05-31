@@ -111,6 +111,7 @@ console.log("[bmc] Was in hand");
 			
 			// Clear out if anyone declared LP
 			this.someoneLP = false;
+			this.iDeclaredLP = false;
 			console.log( "Setting someoneLP false");
 			
 console.log("[bmc] EXIT discardCard");

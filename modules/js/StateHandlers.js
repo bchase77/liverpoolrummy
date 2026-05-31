@@ -81,7 +81,7 @@ var LRStateHandlers = {
 					break;
 				case 'playerTurnPlay':
 					console.log("[bmc] FOUND PlayerTurnPlay");
-					//this.showHideButtons();
+					this.showHideButtons();
 					break;
 				case 'nextPlayer':
 					console.log("[bmc] FOUND nextPlayer");

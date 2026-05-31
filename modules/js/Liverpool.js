@@ -16,8 +16,7 @@ console.log("[bmc] EXIT Liverpool Exists");
 		notif_liverpoolDeclared : function( notif ){
 console.log("[bmc] ENTER Liverpool Declared");
 console.log(notif);
-//			dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red" ); // item, add, remove			
-			dojo.replaceClass( 'buttonLiverpool', "bgabutton_blue", "bgabutton_red" ); // item, add, remove
+			dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red bgabutton_blue" ); // item, add, remove
 
 			console.log( "Setting someoneLP true");
 			this.someoneLP = true;
@@ -50,7 +49,7 @@ console.log("[bmc] EXIT Liverpool Declared");
 console.log("[bmc] ENTER onLiverpoolButton");
 			// var action = 'liverpoolButton';
 			var newAction = 'actLiverpoolButton';
-				
+
 console.log( "[bmc] Trying for Liverpool! ");
 console.log( this.player_id );
 console.log( this.gamedatas.activeTurnPlayer_id );
@@ -58,38 +57,39 @@ console.log( this.goneDown[ this.player_id ]);
 console.log( this.someoneLP );
 
 				// Player must have gone down in order for Liverpool button click to register
-				
+
 				if ( this.someoneLP == false) { // If no one has declared it this card, try it
 					this.someoneLP = true;
-					
+					this.iDeclaredLP = true;
+
 					console.log( "Setting someoneLP true");
 
 					if ( this.goneDown[ this.player_id ] == 1 ) { // 1 = they have gone down
-						
+
 						// If it's already this player's turn then do nothing
 						// if ( this.player_id == this.gamedatas.activeTurnPlayer_id ){
 							//this.onDiscardPileSelectionChanged();
-						
+
 						// } else {
 	// console.log( "Ajax liverpool" );
 
 						this.bgaPerformAction( newAction, { // 'actLiverpoolButton'
 							player_id : this.player_id,
-						},{ 
+						},{
 							checkAction: false,
 							checkPossibleActions: false
 						});
-					
+
 						// this.ajaxcall("/" + this.game_name + "/" + this.game_name + "/" + action + ".html", {
 								// player_id : this.player_id,
 								// lock : true
 							// }, this, function(result) {
 							// }, function(is_error) {
 								// console.error( "Error Reported by LP Ajax:", is_error );
-							// });	
+							// });
 						// }
 					}
-				} else { // Someone else beat you to it
+				} else if ( !this.iDeclaredLP ) { // Someone else beat you to it
 					this.showMessage( _("Someone beat you to Liverpool!" ));
 					// playSound( 'TooSlow' );
 				}
