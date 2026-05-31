@@ -983,40 +983,44 @@ console.log("[bmc] cardIds: " + cardIds );
 			console.log("[bmc] thisPlayerHand");
 			console.log(thisPlayerHand);
 
-			// Remove PLAY CARD button
-			//this.removeActionButtons();
 			this.clearButtons();
 
 			// Swap the order if necessary to keep player's 1st selection 1st
 			if ( this.playerHand.firstSelected != items[ 0 ].type ) {
-				//console.log("[bmc] swap");
 				let temp = items[0];
 				items[0] = items[1];
 				items[1] = temp;
 			}
-// console.log("[bmc] Move cards around");
-		// If two cards have been selected, change the weights
-		// Find the indices of the 1st and 2nd cards and move them around
 
+			// Use id (not type) to locate each card — fixes identical cards in multi-deck games
+			var spotFrom = -1, spotTo = -1;
 			for ( const [i, card] of thisPlayerHand.entries() ) {
-				if ( items[0].type === card.type ) {
-					var spotFrom = i;
-				}
-				if ( items[1].type === card.type ) {
-					var spotTo = i;
-				}
+				if ( spotFrom === -1 && items[0].id === card.id ) spotFrom = i;
+				if ( spotTo   === -1 && items[1].id === card.id ) spotTo   = i;
 			}
-			
-			this.arraymove(thisPlayerHand, spotFrom, spotTo);
 
-			// Make a change array from the result
+			if ( spotFrom === -1 || spotTo === -1 ) {
+				console.log("[bmc] sortHand: card not found, aborting");
+				this.playerHand.unselectAll();
+				return;
+			}
+
+			this.arraymove( thisPlayerHand, spotFrom, spotTo );
+
+			// For identical cards (same type), also reorder the stock's internal
+			// items array so the stable sort in changeItemsWeight preserves the
+			// new relative order between same-weight items.
+			if ( items[0].type === items[1].type ) {
+				this.arraymove( this.playerHand.items, spotFrom, spotTo );
+			}
+
 			let weightChange = {};
 			for (let i in thisPlayerHand) {
-                weightChange[ thisPlayerHand[ i ].type ] = parseInt(i);
+				weightChange[ thisPlayerHand[i].type ] = parseInt(i);
 			}
 console.log("[bmc] WC");
 console.log(weightChange);
-			this.playerHand.changeItemsWeight(weightChange);
+			this.playerHand.changeItemsWeight( weightChange );
 			this.playerHand.unselectAll();
 		},
 /////////
