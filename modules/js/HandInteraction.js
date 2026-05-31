@@ -199,6 +199,11 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 						'cursor:pointer'
 					].join(';')
 				}, $('myhand') );
+
+				// BGA's addToStockWithId attaches an onclick that calls dojo.stopEvent(),
+				// preventing the click from bubbling to $('myhand') where onMyHandAreaClick
+				// would run and deselect everything.  Our manually created div needs the same.
+				dojo.connect( $(newDivId), 'onclick', function(evt) { dojo.stopEvent(evt); } );
 			}
 
 			// Register the item in playerHand.items with the highest weight so future
