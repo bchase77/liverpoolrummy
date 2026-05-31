@@ -1433,9 +1433,7 @@ console.log("[bmc] Doing the window.onload");
 			console.log( "Setting someoneLP false");
 
 			// Hand sort pick-up state
-			this.heldCardId       = null;  // id of card currently "held" for repositioning
-			this.prevSelectedCardId = null; // id of last singly-selected hand card
-			this.handAreaClicked  = false; // distinguish empty-area click from card re-click
+			this.heldCardId = null; // id of card currently "held" for repositioning
 
 			// Run through the function onDiscardPileSelectionChanged only once by checking this variable
 			this.alreadyODPSC = false;
@@ -1488,6 +1486,8 @@ console.log( this.gamedatas.tabletop );
 				dojo.removeClass( 'goDownArea_wrap', 'goDownWrapSkyOverField' );
 				dojo.addClass(    'goDownArea_wrap', 'goDownWrapYellowTable' );
 			}
+
+			this.setupHandHoldListener();
 
             console.log( "[bmc] EXIT game setup" );
         },
