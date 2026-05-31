@@ -715,7 +715,7 @@ self::trace("[bmc] Deadlock:2179");
 					'buyingPlayerName' => $players[ $player_id ][ 'player_name' ]
 				)
 			);
-			throw new BgaUserException( self::_("That card cannot be bought.") );
+			return; // BgaUserException rolls back notifications; return so the log message is sent
 		}
 
 		if (( $countDeck + $countDiscardPile ) < 2 ) {
