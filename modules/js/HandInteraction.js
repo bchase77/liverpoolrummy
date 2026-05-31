@@ -173,14 +173,13 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 			}
 
 			// Build the card's background-position from the sprite sheet.
-			// addItemType was called as addItemType(type_id, type_id, img_url, type_id),
-			// so image_pos === type_id and image_items_per_row === 13.
-			var typeInfo     = this.playerHand.item_type[ cardUniqueId ];
-			var imagePos     = typeInfo ? typeInfo.image_pos : cardUniqueId;
-			var perRow       = this.playerHand.image_items_per_row || 13;
-			var bgX          = -( imagePos % perRow ) * this.cardwidth;
-			var bgY          = -Math.floor( imagePos / perRow ) * this.cardheight;
-			var bgUrl        = typeInfo ? typeInfo.image : ( g_gamethemeurl + 'img/4ColorCardsx5.png' );
+			// addItemType(type_id, type_id, img_url, type_id) was called for every card,
+			// so image_pos === type_id === cardUniqueId.  Use cardUniqueId directly —
+			// reading item_type[x].image_pos is unreliable (BGA may use a different key).
+			var perRow = this.playerHand.image_items_per_row || 13;
+			var bgX    = -( cardUniqueId % perRow ) * this.cardwidth;
+			var bgY    = -Math.floor( cardUniqueId / perRow ) * this.cardheight;
+			var bgUrl  = g_gamethemeurl + 'img/4ColorCardsx5.png';
 
 			// Create the card DOM element at the rightmost slot (no updateDisplay called).
 			var newDivId = 'myhand_item_' + cardId;
