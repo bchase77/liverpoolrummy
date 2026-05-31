@@ -148,66 +148,71 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 /////////
 		// Add a card to the rightmost slot of the hand without disturbing other cards.
 		//
-		// The only safe way to prevent BGA from animating existing cards is to ensure the
-		// new card inserts at the END of this.items (no existing card changes index).
-		// We do that by temporarily raising the new card's item_type weight above the
-		// current maximum — without touching any existing item weights (which caused
-		// the hand to resort in earlier attempts).
-		//
-		// Snapshot+restore handles any centering-margin shift from updateDisplay().
+		// Every approach that calls playerHand.addToStockWithId() triggers updateDisplay(),
+		// which repositions all cards and fires dojo slide animations that override any
+		// synchronous position restoration.  The only reliable solution is to bypass
+		// addToStockWithId entirely: create the card DOM element manually and push the
+		// item directly into playerHand.items.  No updateDisplay() is ever called, so
+		// no existing card is touched.
 		addCardToHandRightmost : function( cardUniqueId, cardId ) {
 			var existingItems = this.playerHand.getAllItems();
 
-			// Snapshot existing card positions and compute the target for the new card.
-			var snapshot = {};
+			// Compute the target left position for the new card.
+			// Derive step from the last two cards; fall back to 50% of cardwidth.
 			var step = Math.round(this.cardwidth * 0.5);
 			var targetLeft = 0;
-
-			for ( var i = 0; i < existingItems.length; i++ ) {
-				var el = $('myhand_item_' + existingItems[i].id);
-				snapshot[ String(existingItems[i].id) ] = el ? ( parseInt(el.style.left) || el.offsetLeft || 0 ) : 0;
-			}
-
 			if ( existingItems.length > 0 ) {
-				var lastLeft = snapshot[ String(existingItems[existingItems.length - 1].id) ] || 0;
+				var lastEl  = $('myhand_item_' + existingItems[existingItems.length - 1].id);
+				var lastLeft = lastEl ? ( parseInt(lastEl.style.left) || lastEl.offsetLeft || 0 ) : 0;
 				if ( existingItems.length >= 2 ) {
-					var prevLeft = snapshot[ String(existingItems[existingItems.length - 2].id) ] || 0;
+					var prevEl   = $('myhand_item_' + existingItems[existingItems.length - 2].id);
+					var prevLeft = prevEl ? ( parseInt(prevEl.style.left) || prevEl.offsetLeft || 0 ) : 0;
 					if ( lastLeft - prevLeft > 0 ) step = lastLeft - prevLeft;
 				}
 				targetLeft = lastLeft + step;
 			}
 
-			// Find the current maximum weight among existing items (do NOT reassign them).
+			// Build the card's background-position from the sprite sheet.
+			// addItemType was called as addItemType(type_id, type_id, img_url, type_id),
+			// so image_pos === type_id and image_items_per_row === 13.
+			var typeInfo     = this.playerHand.item_type[ cardUniqueId ];
+			var imagePos     = typeInfo ? typeInfo.image_pos : cardUniqueId;
+			var perRow       = this.playerHand.image_items_per_row || 13;
+			var bgX          = -( imagePos % perRow ) * this.cardwidth;
+			var bgY          = -Math.floor( imagePos / perRow ) * this.cardheight;
+			var bgUrl        = typeInfo ? typeInfo.image : ( g_gamethemeurl + 'img/4ColorCardsx5.png' );
+
+			// Create the card DOM element at the rightmost slot (no updateDisplay called).
+			var newDivId = 'myhand_item_' + cardId;
+			if ( !$(newDivId) ) {
+				dojo.create( 'div', {
+					id    : newDivId,
+					'class': 'stockitem',
+					style : [
+						'position:absolute',
+						'left:'             + targetLeft       + 'px',
+						'top:0px',
+						'width:'            + this.cardwidth   + 'px',
+						'height:'           + this.cardheight  + 'px',
+						'background-image:url(' + bgUrl + ')',
+						'background-position:' + bgX + 'px ' + bgY + 'px',
+						'z-index:'          + ( existingItems.length + 1 ),
+						'cursor:pointer'
+					].join(';')
+				}, $('myhand') );
+			}
+
+			// Register the item in playerHand.items with the highest weight so future
+			// getAllItems() / updateDisplay() calls keep it at the end.
 			var maxWeight = -1;
 			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
 				if ( this.playerHand.items[j].weight > maxWeight ) maxWeight = this.playerHand.items[j].weight;
 			}
-
-			// Temporarily set the new card's type weight above the max so it inserts last.
-			var savedWeight = null;
-			if ( this.playerHand.item_type && this.playerHand.item_type[cardUniqueId] ) {
-				savedWeight = this.playerHand.item_type[cardUniqueId].weight;
-				this.playerHand.item_type[cardUniqueId].weight = maxWeight + 1;
-			}
-
-			this.playerHand.addToStockWithId( cardUniqueId, cardId );
-
-			if ( savedWeight !== null ) {
-				this.playerHand.item_type[cardUniqueId].weight = savedWeight;
-			}
-
-			// Restore existing card positions (undoes any centering-margin shift).
-			for ( var id in snapshot ) {
-				var el = $('myhand_item_' + id);
-				if ( el ) el.style.left = snapshot[id] + 'px';
-			}
-
-			// Place the new card at the rightmost slot with correct z-index.
-			var newEl = $('myhand_item_' + cardId);
-			if ( newEl ) {
-				newEl.style.left   = targetLeft + 'px';
-				newEl.style.zIndex = existingItems.length + 1;
-			}
+			this.playerHand.items.push({
+				id    : cardId,
+				type  : cardUniqueId,
+				weight: maxWeight + 1
+			});
 		},
 /////////
 /////////
