@@ -2,17 +2,25 @@
 var LRHandInteraction = {
 		onMyHandAreaClick : function() {
 console.log("[bmc] ENTER onMyHandAreaClick");
+			this.handAreaClicked = true; // tell onPlayerHandSelectionChanged this was an empty-area click
 			this.playerHand.unselectAll();
 			this.someoneLP = false;
-			
-			var handCards = this.playerHand.getAllItems();
-console.log( handCards );
-console.log( handCards.length );
 
+			var handCards = this.playerHand.getAllItems();
 			for ( let i in handCards ) {
 				dojo.removeClass('myhand_item_' + handCards[i]['id'], 'stockitem_newcard');
 			}
 console.log("[bmc] EXIT onMyHandAreaClick");
+		},
+/////////
+/////////
+/////////
+		cancelHeldCard : function() {
+			if ( this.heldCardId ) {
+				dojo.removeClass( 'myhand_item_' + this.heldCardId, 'card-held' );
+				this.heldCardId = null;
+			}
+			this.prevSelectedCardId = null;
 		},
 /////////
 /////////
@@ -130,42 +138,74 @@ console.log("[bmc] EXIT onPlayerHandDoubleClick");
 			var items = this.playerHand.getSelectedItems();
 
 			var handCards = this.playerHand.getAllItems();
-console.log( handCards );
-// console.log( handCards.length );
-
 			for ( let i in handCards ) {
 				dojo.removeClass('myhand_item_' + handCards[i]['id'], 'stockitem_newcard');
 			}
-
-console.log( myhand );
-
-console.log( items);
-
-console.log( "[bmc] gamedatas:" );
-console.log( this.gamedatas );
-// console.log( "[bmc] this.player_id:" );
-// console.log( this.gamedatas.playerOrderTrue[ 0 ] ) ;
-// console.log( this.player_id );
+console.log( items );
 console.log( items.length );
 
-			if ( this.goneDown[ this.player_id ] == 0 ) {
-				if ( items.length == 1 ) {
-	console.log("[bmc] Store the first");
-	console.log("[bmc] prepbuttons ON");
-					this.playerHand.firstSelected = items[ 0 ].type;
-					// dojo.replaceClass( 'buttonPrepAreaA', "bgabutton_blue", "bgabutton_gray" ); // item, add, remove
-					// dojo.replaceClass( 'buttonPrepAreaB', "bgabutton_blue", "bgabutton_gray" );
-					// dojo.replaceClass( 'buttonPrepAreaC', "bgabutton_blue", "bgabutton_gray" );
-					// dojo.replaceClass( 'buttonPrepJoker', "bgabutton_blue", "bgabutton_gray" );
-				} else if ( items.length == 0 ) {
-	console.log("[bmc] prepbuttons OFF");
-					// dojo.replaceClass( 'buttonPrepAreaA', "bgabutton_gray", "bgabutton_blue" );
-					// dojo.replaceClass( 'buttonPrepAreaB', "bgabutton_gray", "bgabutton_blue" );
-					// dojo.replaceClass( 'buttonPrepAreaC', "bgabutton_gray", "bgabutton_blue" );
-					// dojo.replaceClass( 'buttonPrepJoker', "bgabutton_gray", "bgabutton_blue" );
+			if ( items.length === 0 ) {
+
+				if ( this.handAreaClicked ) {
+					// Empty area was clicked — cancel everything
+					this.handAreaClicked = false;
+					this.cancelHeldCard();
+
+				} else if ( this.heldCardId ) {
+					// Already in hold mode and card was re-deselected — cancel hold
+					this.cancelHeldCard();
+
+				} else if ( this.prevSelectedCardId ) {
+					// Player re-clicked (toggled off) their selected card → enter hold mode
+					this.heldCardId = this.prevSelectedCardId;
+					this.prevSelectedCardId = null;
+					dojo.addClass( 'myhand_item_' + this.heldCardId, 'card-held' );
+					this.showHideButtons();
+					console.log("[bmc] EXIT onPlayerHandSelectionChanged (hold mode entered)");
+					return;
+
+				} else {
+					this.cancelHeldCard();
 				}
+
+			} else if ( items.length === 1 ) {
+
+				var clickedId = items[0].id;
+
+				if ( this.heldCardId && clickedId !== this.heldCardId ) {
+					// A card is held and a different card was clicked → sort
+					var allItems = this.playerHand.getAllItems();
+					var heldItem = null;
+					for ( var i = 0; i < allItems.length; i++ ) {
+						if ( allItems[i].id === this.heldCardId ) { heldItem = allItems[i]; break; }
+					}
+					if ( heldItem ) {
+						this.playerHand.firstSelected = heldItem.type;
+						this.sortHand( [heldItem, items[0]] );
+					}
+					this.cancelHeldCard();
+					this.playerHand.unselectAll();
+					this.showHideButtons();
+					console.log("[bmc] EXIT onPlayerHandSelectionChanged (sorted)");
+					return;
+
+				} else if ( this.heldCardId && clickedId === this.heldCardId ) {
+					// Player clicked the held (deselected) card → cancel hold
+					this.cancelHeldCard();
+
+				} else {
+					// Normal single selection — track for possible hold on re-click
+					this.prevSelectedCardId = clickedId;
+					this.playerHand.firstSelected = items[0].type;
+				}
+
+			} else {
+				// 2+ cards selected — cancel hold, normal multi-select (prep / meld play)
+				this.cancelHeldCard();
+				this.prevSelectedCardId = null;
 			}
-			this.showHideButtons();			
+
+			this.showHideButtons();
 			console.log("[bmc] EXIT onPlayerHandSelectionChanged");
         },
 /////////

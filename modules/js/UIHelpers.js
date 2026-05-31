@@ -272,6 +272,7 @@ console.log("[bmc] ENTER ShowHideButtons");
 		clearTable : function() {
 			// At the start of each hand give everyone time to see the first discard
 			// And clear the knowledge that they've reviewed the past hand.
+			this.cancelHeldCard();
 			this.firstLoad = 'Yes';
 			this.handReviewed = 'No';
 			
