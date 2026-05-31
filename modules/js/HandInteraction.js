@@ -147,31 +147,34 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 /////////
 /////////
 		// Add a card to the rightmost slot of the hand without disturbing other cards.
-		// Suppresses playerHand.updateDisplay() during the add (which would reposition
-		// everything due to BGA's centering recalculation), then manually places the new
-		// card at rightmost position and updates internal weights for future renders.
-		addCardToHandRightmost : function( cardUniqueId, cardId, fromEl ) {
+		// BGA creates the card DOM element inside updateDisplay(), so we cannot suppress it.
+		// Instead: snapshot existing positions, let addToStockWithId run (and reposition
+		// everything), then immediately restore each existing card to its pre-add position
+		// and place the new card at the rightmost slot.  All synchronous — browser paints
+		// only the final state.
+		addCardToHandRightmost : function( cardUniqueId, cardId ) {
 			var existingItems = this.playerHand.getAllItems();
 
-			// Compute target left for new card: last card's left + one step.
-			// Derive step from the last two cards' positions; fall back to 50% overlap.
+			// Snapshot existing card positions and compute step / target left.
+			var snapshot = {};
 			var step = Math.round(this.cardwidth * 0.5);
 			var targetLeft = 0;
+
+			for ( var i = 0; i < existingItems.length; i++ ) {
+				var el = $('myhand_item_' + existingItems[i].id);
+				snapshot[ String(existingItems[i].id) ] = el ? ( parseInt(el.style.left) || el.offsetLeft || 0 ) : 0;
+			}
+
 			if ( existingItems.length > 0 ) {
-				var lastEl = $('myhand_item_' + existingItems[existingItems.length - 1].id);
-				var lastLeft = lastEl ? ( parseInt(lastEl.style.left) || lastEl.offsetLeft || 0 ) : 0;
+				var lastLeft = snapshot[ String(existingItems[existingItems.length - 1].id) ] || 0;
 				if ( existingItems.length >= 2 ) {
-					var prevEl = $('myhand_item_' + existingItems[existingItems.length - 2].id);
-					if ( prevEl ) {
-						var prevLeft = parseInt(prevEl.style.left) || prevEl.offsetLeft || 0;
-						if ( lastLeft - prevLeft > 0 ) step = lastLeft - prevLeft;
-					}
+					var prevLeft = snapshot[ String(existingItems[existingItems.length - 2].id) ] || 0;
+					if ( lastLeft - prevLeft > 0 ) step = lastLeft - prevLeft;
 				}
 				targetLeft = lastLeft + step;
 			}
 
-			// Assign sequential weights to existing items so future updateDisplay() calls
-			// preserve their current visual order (not the original type-based sort order).
+			// Assign sequential weights so future updateDisplay() preserves visual order.
 			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
 				for ( var k = 0; k < existingItems.length; k++ ) {
 					if ( String(this.playerHand.items[j].id) === String(existingItems[k].id) ) {
@@ -181,11 +184,15 @@ console.log("[bmc] onHandCardHoldClick cardId:", cardId, "heldCardId:", this.hel
 				}
 			}
 
-			// Suppress updateDisplay so the add never repositions existing cards.
-			var origUpdate = this.playerHand.updateDisplay.bind(this.playerHand);
-			this.playerHand.updateDisplay = function() {};
-			this.playerHand.addToStockWithId( cardUniqueId, cardId, fromEl || $('myhand') );
-			this.playerHand.updateDisplay = origUpdate;
+			// Add card without a 'from' animation element — card appears directly.
+			// updateDisplay() runs internally and creates the DOM element.
+			this.playerHand.addToStockWithId( cardUniqueId, cardId );
+
+			// Restore each existing card to its pre-add position (updateDisplay shifted them).
+			for ( var id in snapshot ) {
+				var el = $('myhand_item_' + id);
+				if ( el ) el.style.left = snapshot[id] + 'px';
+			}
 
 			// Move new item to end of items array with highest weight.
 			for ( var j = 0; j < this.playerHand.items.length; j++ ) {
