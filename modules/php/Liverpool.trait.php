@@ -154,25 +154,27 @@ trait Liverpool {
 
 				self::trace("[bmc] Found liverpool ( penalty mode ) just before if");
 				
+				$discarding_name = '<span style="color:#' . $players[ $discardingPlayer ][ 'player_color' ] . ';">' . $players[ $discardingPlayer ][ 'player_name' ] . '</span>';
+
 				if ( $liverpoolExists == 0 ) { // There is no Liverpool condition; Declarer gets penalty
 					self::trace("[bmc] Declarer gets a penalty");
-						
+
 					self::notifyAllPlayers( 'liverpoolDeclared',
 						clienttranslate( '${player_name} declared Liverpool on ${discarding_name} but no Liverpool exists. ${player_name} draws a card.'),
 						array(
-							'player_id' => $player_id,
-							'discarding_name' => $players[ $discardingPlayer ][ 'player_name' ],
+							'player_id'      => $player_id,
+							'discarding_name' => $discarding_name,
 							'player_name'     => $players[ $player_id ][ 'player_name' ]
 						)
 					);
 				} else { // The one who discarded it gets a card, and the discarded card
 					self::trace("[bmc] Discarder gets a penalty");
-					
+
 					self::notifyAllPlayers( 'liverpoolDeclared',
 						clienttranslate( '${player_name} declared Liverpool on ${discarding_name} and so ${discarding_name} pulls it back and draws a card.'),
 						array(
-							'player_id' => $player_id,
-							'discarding_name' => $players[ $discardingPlayer ][ 'player_name' ],
+							'player_id'      => $player_id,
+							'discarding_name' => $discarding_name,
 							'player_name'     => $players[ $player_id ][ 'player_name' ]
 						)
 					);

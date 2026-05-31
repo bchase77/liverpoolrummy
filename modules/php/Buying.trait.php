@@ -297,10 +297,11 @@ self::trace("[bmc] Deadlock:2179");
 			foreach ( $buyingPlayers as  $pid ) {
 				if ( $someoneIsBuying != false ) {
 					self::notifyAllPlayers( 'playerDidNotBuy',
-						clienttranslate( '${buyingPlayerName} tried but could not buy' ),
+						clienttranslate( '${player_name} tried but could not buy' ),
 						array (
+							'player_id'    => $pid,
+							'player_name'  => $players[ $pid ][ 'player_name' ],
 							'buyingPlayers' => $buyingPlayers,
-							'buyingPlayerName' => $players[ $pid ][ 'player_name' ]
 						)
 					);
 				}
@@ -709,10 +710,11 @@ self::trace("[bmc] Deadlock:2179");
 			self::trace("[bmc] CHECKBUYINGALLOWEDYIELDEDNOTTRUE" );
 			$players = self::loadPlayersBasicInfos();
 			self::notifyAllPlayers( 'playerDidNotBuy',
-				clienttranslate( '${buyingPlayerName} tried but could not buy' ),
+				clienttranslate( '${player_name} tried but could not buy' ),
 				array(
+					'player_id'   => $player_id,
+					'player_name' => $players[ $player_id ][ 'player_name' ],
 					'buyingPlayers' => [],
-					'buyingPlayerName' => $players[ $player_id ][ 'player_name' ]
 				)
 			);
 			return; // BgaUserException rolls back notifications; return so the log message is sent
