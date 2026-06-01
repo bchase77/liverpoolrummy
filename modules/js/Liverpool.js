@@ -127,12 +127,9 @@ console.log(joker);
 console.log("[bmc] Spectator T/F:");
 console.log( isReadOnly );
 			
-			if ( !isReadOnly ) {
-				// Remove the borders around the prep area
-				// dojo.removeClass('playerDown_A_' + notif.args.player_id, "buyerLit");
-				// dojo.removeClass('playerDown_B_' + notif.args.player_id, "buyerLit");
-				// dojo.removeClass('playerDown_C_' + notif.args.player_id, "buyerLit");
-				
+			// Only the going-down player slides from their own prep areas.
+			// Other players (and spectators) use the else-block below which slides from the player board.
+			if ( !isReadOnly && String(downPlayer) === String(this.player_id) ) {
 				// And move the cards from my prep area to the board
 				for ( card_id in card_ids ) {
 					color = card_type[ card_id ];
@@ -279,6 +276,20 @@ console.log( isReadOnly );
 // current position to the xpos, ypos relative to the object referred to by domNodeToSlideTo.
 
 					this.playerHand.removeFromStockById( card_ids[ card_id ]);
+				}
+
+				// Animate the joker for observers — it slides from the going-down player's board area
+				if ( joker != undefined && joker.id != 'None' ) {
+					var jokerUniqueID = this.getCardUniqueId( joker.type, joker.type_arg );
+					var targetArea    = notif.args.targetArea;
+					var jokerFrom     = 'overall_player_board_' + downPlayer;
+					if ( targetArea === 'playerDown_A' ) {
+						this.downArea_A_[ downPlayer ].addToStockWithId( jokerUniqueID, joker.id, jokerFrom );
+					} else if ( targetArea === 'playerDown_B' ) {
+						this.downArea_B_[ downPlayer ].addToStockWithId( jokerUniqueID, joker.id, jokerFrom );
+					} else if ( targetArea === 'playerDown_C' ) {
+						this.downArea_C_[ downPlayer ].addToStockWithId( jokerUniqueID, joker.id, jokerFrom );
+					}
 				}
 			}
 			if ( notif.args.targetArea != null ) {
