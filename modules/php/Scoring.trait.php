@@ -163,8 +163,18 @@ trait Scoring {
 		$pn = array();
 		$sql = "SELECT player_id, player_score FROM player ";
 		$pn = self::getCollectionFromDB($sql, true);
-	
+
 		self::dump( "[bmc] pn: ", $pn );
+
+		// Broadcast updated scores immediately so all clients' score panels reflect
+		// the penalty deductions before anyone clicks through the review dialog.
+		$currentHandType = self::getGameStateValue( 'currentHandType' );
+		self::notifyAllPlayers( "newScores", '',
+			array(
+				'newScores'       => $pn,
+				'currentHandType' => $currentHandType
+			)
+		);
 
 		// Show the scoring dialog box
 		

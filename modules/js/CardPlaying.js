@@ -214,7 +214,9 @@ console.log("[bmc] ENTER onPlayerGoDownButton!");
 console.log(this.player_id)
 			// var handItems = this.playerHand.getSelectedItems(); // Get the card for joker swap, if any
 			//var handItems = this.myPrepJoker.getAllItems(); // Get the card for joker swap (should be just 1 if any)
-			
+
+			// Gray the button immediately to block rapid re-clicks before the server responds
+			dojo.replaceClass( 'buttonGoDownStatic', "bgabutton_gray", "bgabutton_blue" );
 		    this.removeActionButtons(); // Remove the button because they played
 
 			// var cardGroupA = this.downArea_A_[this.player_id].getAllItems();
