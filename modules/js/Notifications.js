@@ -68,6 +68,7 @@ console.log(notif);
 			
 			console.log(this.prepAreas);
 			console.log("[bmc] INCREMENTED prepAreas");
+			this.showHideButtons();
 console.log("[bmc] EXIT loadPrepDone");
 		},
 /////////
