@@ -83,6 +83,8 @@ var LRStateHandlers = {
 					break;
 				case 'playerTurnPlay':
 					console.log("[bmc] FOUND PlayerTurnPlay");
+					// LP window closed once the active player has drawn — gray the button for everyone
+					dojo.replaceClass( 'buttonLiverpool', "bgabutton_gray", "bgabutton_red bgabutton_blue" );
 					this.showHideButtons();
 					break;
 				case 'nextPlayer':
