@@ -971,22 +971,73 @@ self::trace("[bmc] Deadlock:2179");
 			$discardColor = $dpCard[ 'type' ];
 			$discardValue = $dpCard[ 'type_arg' ];
 			
+			// Group wishlist entries by player for logging
+			$wishlistByPlayer = [];
+			foreach( $wishLists as $entry ) {
+				$pid = $entry[ 'player_id' ];
+				if ( !isset( $wishlistByPlayer[ $pid ] ) ) {
+					$wishlistByPlayer[ $pid ] = [];
+				}
+				$wishlistByPlayer[ $pid ][] = $entry;
+			}
+
 			foreach( $wishLists as $entry ) {
 				// self::dump("[bmc] wishList entry:", $entry);
 				// self::dump("[bmc] wishList SQL:", $entry['player_id']);
-				
+
 				if (( $entry[ 'player_id' ] != $discardingPlayer_id ) &&
 					( $entry[ 'player_id' ] != $next_player_id )) {
-						
+
 					if (( $entry[ 'card_type' ] == $discardColor ) &&
 						( $entry[ 'card_type_arg' ] == $discardValue )) {
-						
+
 						// self::trace("[bmc] BUY MATCH!");
 						// Call buyRequest with the player id
-						
+
 						$this->buyRequest_fromPHP( $entry[ 'player_id' ]);
 					}
 				}
+			}
+
+			// Log wishlist contents for each eligible player whose list didn't match
+			$players = self::loadPlayersBasicInfos();
+			$discardLabel = ( $discardColor == 5 )
+				? 'Joker'
+				: $this->values_label[ $discardValue ] . ' of ' . $this->colors[ $discardColor ][ 'name' ];
+
+			foreach( $wishlistByPlayer as $pid => $entries ) {
+				if ( $pid == $discardingPlayer_id || $pid == $next_player_id ) {
+					continue;
+				}
+				// Check if any entry matched — if so, the buy already fired, no need to log
+				$matched = false;
+				foreach( $entries as $e ) {
+					if ( $e[ 'card_type' ] == $discardColor && $e[ 'card_type_arg' ] == $discardValue ) {
+						$matched = true;
+						break;
+					}
+				}
+				if ( $matched ) continue;
+
+				$cardList = [];
+				foreach( $entries as $e ) {
+					if ( $e[ 'card_type' ] == 5 ) {
+						$cardList[] = 'Joker';
+					} else {
+						$cardList[] = $this->values_label[ $e[ 'card_type_arg' ] ] . ' of ' . $this->colors[ $e[ 'card_type' ] ][ 'name' ];
+					}
+				}
+				$wishlistStr = implode( ', ', $cardList );
+
+				self::notifyPlayer( $pid, 'message',
+					clienttranslate( '${player_name} wishlist: [${wishlist}] — discard was ${discard}, no match' ),
+					array(
+						'player_id'   => $pid,
+						'player_name' => $players[ $pid ][ 'player_name' ],
+						'wishlist'    => $wishlistStr,
+						'discard'     => $discardLabel,
+					)
+				);
 			}
 		}
 		self::trace( "[bmc] EXIT processWishlist" );
