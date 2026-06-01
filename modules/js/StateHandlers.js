@@ -90,6 +90,11 @@ var LRStateHandlers = {
 				case 'nextPlayer':
 					console.log("[bmc] FOUND nextPlayer");
 					break;
+				case 'wentOut':
+					console.log("[bmc] FOUND wentOut");
+					// Remove the "draw a card" border — the hand is over, not an active draw turn
+					dojo.removeClass('myhand_wrap', "borderDrawer");
+					break;
 				case 'endHand':
 					console.log("[bmc] FOUND endHand");
 					this.playedSoundWentOut = false; // Reset to play the sound only once

@@ -1320,9 +1320,12 @@ console.log("[bmc] DOWN CARD SELECT SETUP");
 			console.log( this.gamedatas.buyers[ this.player_id ] );
 			
 			this.turnPlayer = this.gamedatas.activeTurnPlayer_id;
-			
-			if (this.player_id == this.turnPlayer ) {
-				dojo.addClass('myhand_wrap', "borderDrawer");				
+
+			// Only show the "draw a card" border when actually in the draw state —
+			// not during wentOut review (which would make it look like a live turn).
+			var _stateName = this.gamedatas.gamestate.name;
+			if (this.player_id == this.turnPlayer && _stateName === 'playerTurnDraw') {
+				dojo.addClass('myhand_wrap', "borderDrawer");
 			}
 			// Draw a border around the discard pile so players know where to click
 			dojo.addClass('discardPileOne', 'discardPileArea');
