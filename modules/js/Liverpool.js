@@ -95,12 +95,8 @@ console.log("[bmc] EXIT onLiverpoolButton");
 		
 			// Update card-counts when someone goes down:
 
-			for ( var p_id in notif.args.allHands ) {
-				this.handCount[ p_id ].setValue( notif.args.allHands[ p_id ] );
-			}
-
-			if (notif.args.allHands != null ) {
-				this.myHandSize.setValue( notif.args.allHands[ this.player_id ] );
+			if ( notif.args.allHands != null ) {
+				this.updateHandCounts( notif.args.allHands );
 			}
 			
 			this.goneDown[ notif.args.player_id ] = 1; //0 = Not gone down; 1 = Gone down.

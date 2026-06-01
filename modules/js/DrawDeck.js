@@ -192,9 +192,7 @@ console.log(allHands);
 console.log(discardSize);
 console.log(drawDeckSize);
 
-			for ( var p_id in allHands ) {
-				this.handCount[ p_id ].setValue( allHands[ p_id ] );
-			}
+			this.updateHandCounts( allHands );
 
 			// Remove the borders from the deck and discard pile after the player draws
 			// var deck_items = this.deckOne.getAllItems();
@@ -239,7 +237,6 @@ console.log(this.handCount);
 
 			this.discardSize.setValue( discardSize );
 			this.drawDeckSize.setValue( drawDeckSize );
-			this.myHandSize.setValue( allHands[ this.player_id ] );
 
 console.log("[bmc] modified drawSource");
 console.log(drawSource);
@@ -365,9 +362,7 @@ console.log(drawDeckSize);
 			// Me wathcing live game 1/27: Down card did not slide after a buy.			
 			
 			if ( isReadOnly ) {
-				for ( var p_id in allHands ) {
-					this.handCount[ p_id ].setValue( allHands[ p_id ] );
-				}
+			this.updateHandCounts( allHands );
 
 console.log(this.handCount);
 

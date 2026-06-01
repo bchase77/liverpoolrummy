@@ -34,19 +34,11 @@ console.log( this.playerHand );
 			this.gamedatas.activeTurnPlayer_id = nextTurnPlayer;
 
 			// Adjust all hand card-counts because of the discard
-			for ( var p_id in allHands ) {
-				this.handCount[ p_id ].setValue( allHands[ p_id ] );
-			}
+			this.updateHandCounts( allHands );
 
 			// Set the draw deck and discard pile size for players to see
 			this.discardSize.setValue( discardSize );
 			this.drawDeckSize.setValue( drawDeckSize );
-			
-			if ( allHands[ this.player_id ] != undefined ) {
-				this.myHandSize.setValue( allHands[ this.player_id ] );
-			} else {
-				this.myHandSize.setValue( 0 );
-			}
 
 			// Remove any existing discard pile card
 			//if ( this.discardPile.items.length > 0 ) {
@@ -269,6 +261,28 @@ console.log("[bmc] ENTER ShowHideButtons");
 /////////
 /////////
 /////////
+		// Update all hand-count displays and apply/remove the 1-card-left alert on player boards.
+		updateHandCounts : function( allHands ) {
+			for ( var p_id in allHands ) {
+				this.handCount[ p_id ].setValue( allHands[ p_id ] );
+				var board = $('overall_player_board_' + p_id);
+				if ( board ) {
+					if ( parseInt(allHands[ p_id ]) === 1 && !this.goneDown[ p_id ] ) {
+						dojo.addClass( board, 'playerOneLast' );
+						dojo.addClass( board, 'blink' );
+					} else {
+						dojo.removeClass( board, 'playerOneLast' );
+						dojo.removeClass( board, 'blink' );
+					}
+				}
+			}
+			if ( allHands[ this.player_id ] !== undefined ) {
+				this.myHandSize.setValue( allHands[ this.player_id ] );
+			}
+		},
+/////////
+/////////
+/////////
 		clearTable : function() {
 			// At the start of each hand give everyone time to see the first discard
 			// And clear the knowledge that they've reviewed the past hand.
@@ -288,6 +302,8 @@ console.log("[bmc] ENTER ShowHideButtons");
 				this.downArea_B_[ player ].removeAll();
 				this.downArea_C_[ player ].removeAll();
 				dojo.removeClass( 'overall_player_board_' + player, 'playerWentDown' );
+				dojo.removeClass( 'overall_player_board_' + player, 'playerOneLast' );
+				dojo.removeClass( 'overall_player_board_' + player, 'blink' );
 
 				this.goneDown[ player ] = 0;
 			}
@@ -382,8 +398,8 @@ console.log(notif);
 				for ( var player_id in this.gamedatas.players ) {
 console.log("[bmc] Updating buys and cards");
 					this.buyCount[ player_id ].setValue( notif.args.buyCount[ player_id ] );
-					this.handCount[ player_id ].setValue( notif.args.allHands[ player_id ] );
 				}
+				this.updateHandCounts( notif.args.allHands );
 			}
 			console.log("[bmc] EXIT clearPlayerBoards");
 		},
@@ -444,7 +460,7 @@ console.log("Set up players new hand");
 				}
 
 				if ( notif.args.allHands != null ) {
-					this.myHandSize.setValue( notif.args.allHands[ this.player_id ] );
+					this.updateHandCounts( notif.args.allHands );
 				}
 	console.log("[bmc] this.playerHand");			
 	console.log(this.playerHand);
@@ -468,9 +484,7 @@ console.log("Set up players new hand");
 			}
 
 			// Set the hand counts for all players
-			for ( var p_id in notif.args.allHands ) {
-				this.handCount[ p_id ].setValue( notif.args.allHands[ p_id ] );
-			}
+			this.updateHandCounts( notif.args.allHands );
 			
 			// this.buyTimeInSeconds = 40;
 			

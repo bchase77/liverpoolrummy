@@ -1422,14 +1422,11 @@ console.log("[bmc] Doing the window.onload");
 					// this.sortBoard(), 10000
 				// );
 
-			// Get status of the voices box
-			if ( $('voice').checked ) {
-				console.log("Voices CHECKED");
-				this.voices = true;
-			} else {
-				console.log("Voices UNCHECKED");
-				this.voices = false;
-			}
+			// Restore voices setting from localStorage; default to checked if never saved
+			var savedVoices = localStorage.getItem('liverpoolrummy_voices');
+			if ( savedVoices === null ) savedVoices = 'true'; // default on
+			this.voices = ( savedVoices === 'true' );
+			$('voice').checked = this.voices;
 
 			// Keep track every card if someone declared LP or not
 			this.someoneLP = false;

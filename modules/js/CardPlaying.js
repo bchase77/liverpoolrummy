@@ -28,13 +28,8 @@ console.log("[bmc] ENTER onPlayerReviewedHandButton");
 /////////
 		onVoiceCheckbox : function() {
 console.log("[bmc] ENTER onVoiceCheckbox");
-			if ( $('voice').checked ) {
-				console.log("CHECKED");
-				this.voices = true;
-			} else {
-				console.log("UNCHECKED");
-				this.voices = false;
-			}
+			this.voices = $('voice').checked;
+			localStorage.setItem( 'liverpoolrummy_voices', this.voices ? 'true' : 'false' );
 		},
 /////////
 /////////
@@ -139,13 +134,7 @@ console.log( allHands );
 console.log( cardUniqueId );
 
 			// Update card quantities in player hands
-			for ( var p_id in allHands ) {
-				this.handCount[ p_id ].setValue( allHands[ p_id ] );
-			}
-
-			if ( allHands != null ) {
-				this.myHandSize.setValue( allHands[ this.player_id ] );
-			}
+			this.updateHandCounts( allHands );
 
 // add joker if there
 			

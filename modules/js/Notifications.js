@@ -98,12 +98,7 @@ console.log("[bmc] notif_noDraw", notif);
 		notif_cardsPlayedMultiple : function( notif ){
 console.log("[bmc] notif_cardsPlayedMultiple", notif);
 			// Log-only summary; individual cardPlayed notifications handle card animation.
-			for ( var p_id in notif.args.allHands ) {
-				this.handCount[ p_id ].setValue( notif.args.allHands[ p_id ] );
-			}
-			if ( notif.args.allHands[ this.player_id ] != undefined ) {
-				this.myHandSize.setValue( notif.args.allHands[ this.player_id ] );
-			}
+			this.updateHandCounts( notif.args.allHands );
 		},
 /////////
 /////////
@@ -390,9 +385,9 @@ console.log(player_id);
 console.log(notif.args.buyCount[ player_id ]);
 console.log(notif.args.allHands[ player_id ]);
 
-				this.buyCount[  player_id ].setValue( notif.args.buyCount[ player_id ] );
-				this.handCount[ player_id ].setValue( notif.args.allHands[ player_id ] );
+				this.buyCount[ player_id ].setValue( notif.args.buyCount[ player_id ] );
 			}
+			this.updateHandCounts( notif.args.allHands );
 			
 			// If I bought then turn off the wishlist if it's on
 			if ( this.player_id == notif.args.player_id ) {

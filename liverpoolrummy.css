@@ -138,6 +138,11 @@ individually display or hide the element.
 	background: LightGreen;
 }
 
+.playerOneLast {
+	background: #ff4444 !important;
+	color: white;
+}
+
 .blink {
 	animation: blinker 1s linear infinite;
 }
